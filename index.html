@@ -35,9 +35,12 @@
     <section class="pane pane-out" aria-labelledby="out-label">
       <div class="pane-bar">
         <span class="pane-label" id="out-label">IPA</span>
-        <div class="segmented" role="radiogroup" aria-label="Transcription type">
-          <label><input type="radio" name="mode" id="mode-phonetic" value="phonetic" checked><span>Phonetic [ ]</span></label>
-          <label><input type="radio" name="mode" id="mode-phonemic" value="phonemic"><span>Phonemic / /</span></label>
+        <div class="bar-actions">
+          <div class="segmented" role="radiogroup" aria-label="Transcription type">
+            <label><input type="radio" name="mode" id="mode-phonetic" value="phonetic" checked><span>Phonetic [ ]</span></label>
+            <label><input type="radio" name="mode" id="mode-phonemic" value="phonemic"><span>Phonemic / /</span></label>
+          </div>
+          <button type="button" class="chip-btn" id="copy">Copy</button>
         </div>
       </div>
       <div id="output" class="output" role="region" aria-label="IPA transcription"></div>
@@ -55,7 +58,6 @@
             <option value="1.2">1.2×</option>
           </select>
         </div>
-        <button type="button" class="chip-btn" id="copy">Copy IPA</button>
       </div>
       <p class="voice-note" id="voice-note" hidden></p>
     </section>
@@ -81,7 +83,7 @@
     </fieldset>
     <fieldset>
       <legend>Casual speech</legend>
-      <label class="check"><input type="checkbox" id="opt-sPause"><span>/s/ → <b class="ipa">h</b> before a pause (11% in Terrell 1978)</span><i class="ev ev-secondary">minority</i></label>
+      <label class="check"><input type="checkbox" id="opt-sPause"><span>/s/ → <b class="ipa">h</b> before a pause, a minority variant (11%, Terrell 1978)</span><i class="ev ev-verified">verified</i></label>
       <label class="check"><input type="checkbox" id="opt-dFinal"><span>Drop final -d</span><i class="ev ev-recalled">unverified</i></label>
       <label class="check"><input type="checkbox" id="opt-rInfinitive"><span>Drop infinitive -r</span><i class="ev ev-secondary">secondary</i></label>
       <label class="check"><input type="checkbox" id="opt-njMerger"><span>ñ → <b class="ipa">nj</b> (younger speakers)</span><i class="ev ev-verified">verified</i></label>

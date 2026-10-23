@@ -53,3 +53,22 @@ Vanilla JS (ES modules), no framework, no runtime or build dependencies.
 - Words in the output are not keyboard-focusable, so the tooltip is
   mouse-only. The same information is in the rule cards.
 - JS is not minified; gzip/brotli from Cloudflare makes the gain small.
+
+# Design review (2026-10-23, second iteration)
+
+Checked on the local build at desktop width (light) and 375 px (dark), and
+on production before the fix.
+
+| Finding | Severity | Fix |
+|---|---|---|
+| The word tooltip never hid: `.tip { display: grid }` overrode the browser's `[hidden] { display: none }`, so `tip.hidden = true` had no effect. Reproduced on production (hidden = true, computed display = grid). The speech bar had the same latent bug for devices with no Spanish voice. It went unnoticed in the Artifact preview, whose wrapper adds its own `[hidden]` rule | critical | Global `[hidden] { display: none !important }`. The tooltip also hides when the pointer leaves the output, on Escape, on a tap outside a word, and on every re-render. Verified: computed display none after moving away |
+| Output footer: "Copy IPA" wrapped alone onto a second line on desktop; on a phone the speech controls took four rows | moderate | Copy moved to the output header next to the mode switch (it acts on the output); the speech bar is one row whose voice picker shrinks with an ellipsis |
+| The "/s/ before a pause" option showed a "minority" pill in the colour of "secondary", mixing frequency with evidence | moderate | The pill shows the evidence level (verified, Terrell 1978); "minority variant" moved into the label |
+| `--warn` on the page background was 4.49:1, under AA's 4.5:1 for small text | moderate | `#9a6200` → `#8a5800`: 5.32:1 on `--bg`, 5.88:1 on `--panel` |
+| Buttons were 28–31 px tall: above WCAG 2.5.8's 24 px, small for fingers | minor | 40 px minimum under `pointer: coarse` |
+| The no-voice note was two lines on most devices | minor | Shortened |
+| Output words are not keyboard-focusable | known | Unchanged: the rule cards carry the same information |
+
+Contrast after the change (WCAG relative luminance): body text 14.4–16.0:1;
+muted text 5.1–5.6:1; pills 4.6–5.9:1 in light, 6.2–8.4:1 in dark. The tie
+‿ (3.1:1 light) is a non-text graphic, where 3:1 applies.

@@ -89,6 +89,7 @@ function render() {
     out.append(el('span', 'delim', close));
   }
   $('output').replaceChildren(out);
+  tip.hidden = true; // its word may no longer exist
   renderRules(shown.rules);
 }
 
@@ -161,16 +162,21 @@ output.addEventListener('mouseover', (e) => {
   const span = e.target.closest('.w');
   if (span) showTip(span);
 });
+const hideTip = () => { tip.hidden = true; };
 output.addEventListener('mouseout', (e) => {
-  if (e.target.closest('.w') && !e.relatedTarget?.closest?.('.w')) tip.hidden = true;
+  if (e.target.closest('.w') && !e.relatedTarget?.closest?.('.w')) hideTip();
 });
+output.addEventListener('mouseleave', hideTip);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTip(); });
+// On touch screens a tap shows the tooltip; a tap anywhere else closes it.
+document.addEventListener('pointerdown', (e) => { if (!e.target.closest?.('#output .w')) hideTip(); });
 output.addEventListener('click', (e) => {
   const span = e.target.closest('.w');
   const u = span && utterance(current.shown.tokens[Number(span.dataset.i)].text);
   if (u) synth.speak(u);
 });
 
-window.addEventListener('scroll', () => { tip.hidden = true; }, { passive: true });
+window.addEventListener('scroll', hideTip, { passive: true });
 
 function highlightRule(id) {
   output.querySelectorAll('.w').forEach((w) => {
@@ -214,7 +220,7 @@ function loadVoices() {
   } else {
     $('speech').hidden = false;
     note.hidden = voiceRank(voices[0]) <= 1;
-    note.textContent = 'No Argentine or Uruguayan voice on this device. The voice has a different accent, so trust the transcription over the audio.';
+    note.textContent = 'No Argentine or Uruguayan voice on this device: the audio has another accent.';
   }
 }
 
@@ -291,7 +297,7 @@ $('copy').addEventListener('click', async () => {
     getSelection().addRange(range);
     btn.textContent = 'Selected, press Ctrl+C';
   }
-  setTimeout(() => { btn.textContent = 'Copy IPA'; }, 1600);
+  setTimeout(() => { btn.textContent = 'Copy'; }, 1600);
 });
 $('speak').addEventListener('click', speakAll);
 
