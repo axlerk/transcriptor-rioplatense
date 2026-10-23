@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Transcriptor fonético rioplatense</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Charis+SIL:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <h1>Transcriptor fonético <em>rioplatense</em></h1>
+    <p class="masthead-ipa" id="title-ipa" aria-hidden="true"></p>
+    <p class="lede">Spanish text to IPA as spoken in Buenos Aires and Montevideo: sheísmo, /s/ aspiration, synalepha and the rest, each rule tied to its source.</p>
+  </header>
+
+  <main class="workbench">
+    <section class="pane" aria-labelledby="in-label">
+      <div class="pane-bar">
+        <span class="pane-label" id="in-label">Español rioplatense</span>
+        <div class="bar-actions">
+          <button type="button" class="chip-btn" id="sample-porteno">Sample</button>
+          <button type="button" class="chip-btn" id="sample-coloma" title="The passage transcribed in Coloma's IPA Illustration">North Wind and Sun</button>
+          <button type="button" class="chip-btn" id="clear">Clear</button>
+        </div>
+      </div>
+      <textarea id="input" spellcheck="false" maxlength="5000" aria-label="Spanish text" placeholder="Escribí o pegá un texto acá"></textarea>
+      <div class="pane-foot"><span id="count" class="count">0 / 5000</span></div>
+    </section>
+
+    <section class="pane pane-out" aria-labelledby="out-label">
+      <div class="pane-bar">
+        <span class="pane-label" id="out-label">IPA</span>
+        <div class="segmented" role="radiogroup" aria-label="Transcription type">
+          <label><input type="radio" name="mode" id="mode-phonetic" value="phonetic" checked><span>Phonetic [ ]</span></label>
+          <label><input type="radio" name="mode" id="mode-phonemic" value="phonemic"><span>Phonemic / /</span></label>
+        </div>
+      </div>
+      <div id="output" class="output" aria-live="polite"></div>
+      <div class="pane-foot">
+        <div class="speech" id="speech">
+          <button type="button" class="speak-btn" id="speak" aria-label="Read the text aloud">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none"/></svg>
+            <span>Listen</span>
+          </button>
+          <select id="voice" aria-label="Voice"></select>
+          <select id="rate" aria-label="Speed">
+            <option value="0.6">0.6×</option>
+            <option value="0.8">0.8×</option>
+            <option value="1" selected>1×</option>
+            <option value="1.2">1.2×</option>
+          </select>
+        </div>
+        <button type="button" class="chip-btn" id="copy">Copy IPA</button>
+      </div>
+      <p class="voice-note" id="voice-note" hidden></p>
+    </section>
+  </main>
+
+  <section class="settings" aria-label="Options">
+    <fieldset>
+      <legend>ll / y</legend>
+      <div class="segmented" role="radiogroup" aria-label="Realization of ll and y">
+        <label><input type="radio" name="palatal" id="palatal-sh" value="ʃ" checked><span><b class="ipa">ʃ</b> sheísmo</span></label>
+        <label><input type="radio" name="palatal" id="palatal-zh" value="ʒ"><span><b class="ipa">ʒ</b> žeísmo</span></label>
+      </div>
+      <p class="hint">[ʃ] is the norm for young porteños; [ʒ] is older speakers and much of Montevideo.</p>
+    </fieldset>
+    <fieldset>
+      <legend>Display</legend>
+      <label class="check"><input type="checkbox" id="opt-links"><span>Links and synalepha <b class="ipa">‿</b></span></label>
+      <label class="check"><input type="checkbox" id="opt-syllables"><span>Syllable dots <b class="ipa">.</b></span></label>
+      <label class="check"><input type="checkbox" id="opt-monosyllableStress"><span>Stress on one-syllable words</span></label>
+      <label class="check"><input type="checkbox" id="opt-approximantDiacritic"><span>Approximant mark <b class="ipa">β̞ ð̞ ɣ̞</b></span></label>
+      <label class="check"><input type="checkbox" id="opt-fallingGlides"><span>Falling glides as <b class="ipa">i̯ u̯</b></span></label>
+      <label class="check"><input type="checkbox" id="opt-ipaPauses"><span>Pauses as <b class="ipa">| ‖</b></span></label>
+    </fieldset>
+    <fieldset>
+      <legend>Casual speech</legend>
+      <label class="check"><input type="checkbox" id="opt-sPause"><span>/s/ → <b class="ipa">h</b> before a pause</span><i class="ev ev-secondary">secondary</i></label>
+      <label class="check"><input type="checkbox" id="opt-dFinal"><span>Drop final -d</span><i class="ev ev-recalled">unverified</i></label>
+      <label class="check"><input type="checkbox" id="opt-rInfinitive"><span>Drop infinitive -r</span><i class="ev ev-secondary">secondary</i></label>
+      <label class="check"><input type="checkbox" id="opt-njMerger"><span>ñ → <b class="ipa">nj</b> (younger speakers)</span><i class="ev ev-verified">verified</i></label>
+    </fieldset>
+  </section>
+
+  <section class="rules" aria-labelledby="rules-title">
+    <h2 id="rules-title">Rules at work in this text</h2>
+    <p class="rules-intro">Hover a card to find its words in the transcription. Hover a word to see its phonemic and phonetic forms; click it to hear it.</p>
+    <div id="rules" class="rule-grid"></div>
+  </section>
+
+  <footer class="sources">
+    <h2>Sources</h2>
+    <p>The rules follow Germán Coloma, <a href="https://ucema.edu.ar/u/gcoloma/ArgentineSpanish.pdf" target="_blank" rel="noopener">“Argentine Spanish”</a>, <i>Journal of the International Phonetic Association</i>, Illustrations of the IPA. Its word tables and its narrow transcription of “The North Wind and the Sun” are the test fixtures. Each rule card says whether its rule was checked in that primary source (<i class="ev ev-verified">verified</i>), taken from a secondary summary (<i class="ev ev-secondary">secondary</i>), or comes from general Spanish phonetics without Buenos Aires data (<i class="ev ev-recalled">unverified</i>).</p>
+    <p>General Spanish transcribers mark stress before the vowel and stress every monosyllable. Some also write Castilian [θ] and [ʎ]. Here, stress goes before the syllable, as in IPA practice and in Coloma, and there is no [θ] or [ʎ].</p>
+    <p>The audio comes from your device's speech voices. Few devices have an Argentine voice, so trust the transcription over the audio.</p>
+  </footer>
+</div>
+
+<div id="tip" class="tip" role="tooltip" hidden></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

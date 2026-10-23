@@ -4,8 +4,12 @@
   "description": "Phonetic (IPA) transcriber for Rioplatense Spanish",
   "type": "module",
   "license": "MIT",
-  "bin": { "transcribe-rioplatense": "bin/transcribe.js" },
+  "bin": {
+    "transcribe-rioplatense": "bin/transcribe.js"
+  },
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "build": "node scripts/build-artifact.js",
+    "start": "python3 -m http.server 8765 --bind 127.0.0.1"
   }
 }
