@@ -1,0 +1,11 @@
+{
+  "name": "transcriptor-rioplatense",
+  "version": "0.1.0",
+  "description": "Phonetic (IPA) transcriber for Rioplatense Spanish",
+  "type": "module",
+  "license": "MIT",
+  "bin": { "transcribe-rioplatense": "bin/transcribe.js" },
+  "scripts": {
+    "test": "node --test"
+  }
+}
