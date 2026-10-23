@@ -42,7 +42,7 @@ for (const f of fonts) {
   hashed[f] = f.replace('.woff2', `.${sha(data, 'hex').slice(0, 10)}.woff2`);
   write(`dist/site/fonts/${hashed[f]}`, data);
 }
-const renameFonts = (s) => s.replace(/fonts\/([\w-]+\.woff2)/g, (_, f) => `/fonts/${hashed[f]}`);
+const renameFonts = (s) => s.replace(/href="icon\.svg"/, 'href="/icon.svg"').replace(/fonts\/([\w-]+\.woff2)/g, (_, f) => `/fonts/${hashed[f]}`);
 const siteCss = renameFonts(css);
 const siteHead = renameFonts(head)
   .replace(/<meta name="claude:viewport-fit-sides"[^>]*>\n/, '')
@@ -51,6 +51,7 @@ const siteHtml = html
   .replace(head, siteHead)
   .replace(/<script type="module" src="app\.js"><\/script>/, `<script type="module">\n${script}</script>`);
 write('dist/site/index.html', siteHtml);
+write('dist/site/icon.svg', read('icon.svg'));
 
 const inline = (tag, s) => [...s.matchAll(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`, 'g'))]
   .map((m) => `'sha256-${sha(m[1], 'base64')}'`).join(' ');
@@ -82,7 +83,7 @@ const dataUri = (f) => `data:font/woff2;base64,${read(`fonts/${f}`, null).toStri
 const artifactCss = css.replace(/url\(fonts\/([\w-]+\.woff2)\)/g, (_, f) => `url(${dataUri(f)})`);
 const artifactHead = head
   .split('\n')
-  .filter((l) => !/<meta charset|<meta name="viewport"|rel="preload"|href="style\.css"/.test(l))
+  .filter((l) => !/<meta charset|<meta name="viewport"|rel="preload"|rel="icon"|href="style\.css"/.test(l))
   .join('\n')
   .trim();
 const artifact = `${artifactHead}\n<style>\n${artifactCss}</style>\n${body}\n<script type="module">\n${script}</script>\n`;
