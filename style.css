@@ -198,7 +198,7 @@ legend {
 .check .ev { margin-left: auto; }
 .ev-verified { color: var(--ok); }
 .ev-secondary { color: var(--warn); }
-.ev-recalled { color: var(--risk); }
+.ev-recalled, .ev-inferred { color: var(--risk); }
 
 /* Rules */
 .rules h2, .sources h2 { margin: 0 0 4px; font: 700 1.3rem/1.2 var(--display); }

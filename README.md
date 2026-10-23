@@ -37,7 +37,7 @@ node bin/transcribe.js "Che, ¿vos sabés dónde queda la calle Florida?"
 # ˈtʃe, ¿ˈbo saˈβeh ˈðonde ˈkeða la ˈkaʃe floˈɾiða?
 ```
 
-Flags: `--phonemic`, `--zh` (žeísmo), `--syllables`, `--casual`.
+Flags: `--phonemic`, `--zh` (žeísmo), `--syllables`, `--casual` (all casual-speech rules), `--nj` (ñ → nj).
 
 As a library:
 

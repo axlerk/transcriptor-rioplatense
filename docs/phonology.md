@@ -89,7 +89,8 @@ nonsyllabic allophones [e̯ o̯].
 | `hi` + vowel | /i/ → [j] | *hielo* [ˈjelo]; contrasts with `y`: *hierro* [ˈjero] vs *yerro* [ˈʃero] | C18 verified |
 | `hu` + vowel | /u/ → [w] | *huevo* [ˈweβo] | C18 verified |
 | `y` as a word, word-final or before a consonant | /i/ | *muy* [muj], *y el* [jel] | C18 verified |
-| `sh` | /ʃ/ | loans: *shampoo* [ʃamˈpu]; stays [ʃ] even for [ʒ] speakers (Fontanella 1987 via C18) | C18 verified |
+| `sh` | /ʃ/ | loans: *shampoo* [ʃamˈpu]; stays [ʃ] even for [ʒ] speakers (Fontanella 1987 via C18). Not after the prefixes des-, dis-, tras-, trans- before h + vowel: *deshielo* [dehˈjelo] | C18 verified; prefix exception inferred (D50, D51) |
+| Loan spellings | — | doubled consonants and `ck` = one consonant, final `-ng` = [n], plus a short list of respelled English loans (*jean* [ʃin], *sándwich* [ˈsaŋɡwitʃ]) | inferred (D52, D53) |
 | `c` before e/i, `z`, `s` | /s/ | seseo | C18 verified |
 | `j`, `g` before e/i | /x/ | never [h] in Buenos Aires | C18 verified |
 | `x` | /ks/ | *extraño* [eksˈtɾaɲo]; word-initially /s/; *México, Texas, Oaxaca* /x/ | ks: C18; rest recalled |
@@ -113,7 +114,12 @@ nonsyllabic allophones [e̯ o̯].
    - The /s/ in /ks/ is left as [s]: C18 writes *un extraño* `neks·'tɾa·ɲo`.
    - /s/ + /s/ → a single [s]: *más soplaba* → C18 `'ma·so 'pla·βa`.
    - Before a word-initial glide (*los huevos*) /s/ is treated as
-     preconsonantal → [h]. **Inferred**, not checked.
+     preconsonantal → [h]. **Inferred**, not checked; shown in the UI as
+     its own "inferred" rule card (D16, D56).
+   - /s/ after another coda consonant (*abstracto*, *instante*,
+     *perspectiva*) gets the same rule. **Inferred**: the Rioplatense
+     studies read exclude these clusters, and a general source suggests
+     reduction to [s] instead. Own "inferred" rule card (D17, D56).
 3. **Nasal place assimilation**. /n/ → [m] before /p b/ (C18:
    *envuelto* `em 'bwel·to`, *convinieron* `kom·bi`), [ŋ] before
    /k ɡ x/ (C18: *manga* [ˈmaŋɡa], *con gran* `koŋ 'ɡran`), [ɲ] before /tʃ/

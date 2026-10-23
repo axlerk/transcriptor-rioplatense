@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Usage: transcribe.js [--phonemic] [--zh] [--syllables] [--casual] "texto"
+// Usage: transcribe.js [--phonemic] [--zh] [--syllables] [--casual] [--nj] "texto"
+// --casual turns on all casual-speech rules; --nj the ñ → nj merger of younger speakers.
 // Reads stdin when no text is given.
 import { readFileSync } from 'node:fs';
 import { transcribe } from '../src/transcriber.js';
@@ -14,5 +15,7 @@ const result = transcribe(text, {
   syllables: flags.has('--syllables'),
   sPause: casual,
   dFinal: casual,
+  rInfinitive: casual,
+  njMerger: flags.has('--nj'),
 });
 console.log(result.text);

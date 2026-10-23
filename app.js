@@ -100,7 +100,7 @@ function appendWithTies(parent, text) {
   });
 }
 
-const EVIDENCE_LABEL = { verified: 'verified', secondary: 'secondary', recalled: 'unverified' };
+const EVIDENCE_LABEL = { verified: 'verified', secondary: 'secondary', recalled: 'unverified', inferred: 'inferred' };
 
 function renderRules(counts) {
   const grid = $('rules');

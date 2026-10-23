@@ -96,3 +96,16 @@ which) instead of editing the old row, so the history stays readable.
 | D47 | 2026-10-23 | Intonation (long fall, falling yes/no questions) not represented | C18 | verified, out of scope |
 | D48 | 2026-10-23 | Northern and western Argentine features ([ʑ] for /r/, [ʎ], [ç], [ʝ]) not applied | C18 | verified |
 | D49 | 2026-10-23 | Emphatic [v] for spelling v not generated | C18 (optional, speaker-dependent) | verified |
+
+## Second pass, after the source check (2026-10-23)
+
+| # | Date | Decision | Source | Evidence |
+|---|---|---|---|---|
+| D50 | 2026-10-23 | After the prefixes des-, dis-, tras-, trans-, before a silent h and a vowel, s + h is not the digraph sh: the h is silent. Bug fix: *deshielo* was [deˈʃjelo] | general Spanish orthography | inferred |
+| D51 | 2026-10-23 | In that case, before hie- / hue- the /s/ stays in the coda and aspirates, as in D16 (*deshielo* [dehˈjelo], *deshuesar* [dehweˈsaɾ]); before another vowel it resyllabifies (*deshacer* [desaˈseɾ]) | none | inferred |
+| D52 | 2026-10-23 | Loan spellings: doubled consonant letters and ck stand for one consonant, word-final -ng is [n], and stress is computed from that spelling (*shopping* [ˈʃopin], *camping* [ˈkampin], *pizza* [ˈpisa]) | none; the pronunciations are recalled | inferred |
+| D53 | 2026-10-23 | Respellings for frequent English loans as said in Buenos Aires: *jean(s)* [ʃin(s)], *sándwich* [ˈsaŋɡwitʃ], *jazz*, *hall*, *hobby*, *mail*, *email*, *freezer*, *jogging*, *marketing* | none; recalled | inferred |
+| D54 | 2026-10-23 | The "/s/ before a pause → [h]" option stays, relabelled as a minority variant with T78's figures ([s] 78%, [h] 11%, deleted 11%). Supersedes the "secondary" grading of D40 | T78 | verified |
+| D55 | 2026-10-23 | The "drop final -d" option (D41) stays, labelled unverified. No source supports or rules out final /d/ loss in Buenos Aires; L94's statement concerns intervocalic /d/. To revisit if a Rioplatense study is found | DCG11, L94 | inferred, open |
+| D56 | 2026-10-23 | Inferred /s/ cases get their own rule cards, marked "inferred" in the UI: s_cluster (D17) and s_glide (D16, D51) | — | notation |
+| D57 | 2026-10-23 | CLI `--casual` turns on all three casual rules (D40, D41, D42); ñ → [nj] (D43) is a separate `--nj` flag, because it is a generational variant, not a register | C18 (merger described for younger speakers) | notation |

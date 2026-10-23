@@ -21,7 +21,7 @@ export const RULES = {
   },
   sh: {
     title: 'sh → [ʃ]',
-    text: 'In loanwords, sh is always voiceless [ʃ], even for speakers who say [ʒ] for ll / y.',
+    text: 'In loanwords, sh is always voiceless [ʃ], even for speakers who say [ʒ] for ll / y. After the prefixes des-, dis-, tras-, trans- the h is silent instead (deshielo).',
     example: 'shampoo [ʃamˈpu], show [ˈʃow]',
     source: C18 + ' (citing Fontanella 1987)',
     evidence: 'verified',
@@ -48,11 +48,25 @@ export const RULES = {
     evidence: 'verified',
   },
   s_pause: {
-    title: '/s/ → [h] before a pause (casual)',
-    text: 'In popular speech, final /s/ also aspirates before a pause.',
+    title: '/s/ → [h] before a pause (minority variant)',
+    text: 'Before a pause, educated porteños keep [s] 78% of the time; /s/ weakens to [h] in 11% of cases and is dropped in another 11%. This option shows the [h] variant.',
     example: 'vamos. [ˈbamoh]',
-    source: 'Wikipedia "Rioplatense Spanish", citing Coloma 2018 and Lipski 1988',
-    evidence: 'secondary',
+    source: 'Terrell 1978, "La aspiración y elisión de /s/ en el español porteño", Anuario de Letras 16 (24 speakers, 2407 pre-pausal tokens)',
+    evidence: 'verified',
+  },
+  s_cluster: {
+    title: '/s/ after another consonant → [h]',
+    text: 'In clusters such as abstracto or instante the ordinary aspiration rule is applied. No Rioplatense data: the studies read leave these clusters out, and a general source suggests they may reduce to [s] instead.',
+    example: 'abstracto [aβhˈtɾakto], instante [inhˈtante]',
+    source: 'Our inference (docs/decisions.md D17)',
+    evidence: 'inferred',
+  },
+  s_glide: {
+    title: '/s/ before a glide → [h]',
+    text: 'Before hie- and hue- the glide is treated like a consonant, so /s/ aspirates instead of linking. Not checked against data.',
+    example: 'los huevos [loh ˈweβos], deshielo [dehˈjelo]',
+    source: 'Our inference (docs/decisions.md D16)',
+    evidence: 'inferred',
   },
   s_merge: {
     title: '/s/ + /s/ → [s]',
@@ -126,16 +140,16 @@ export const RULES = {
   },
   d_final: {
     title: 'Final -d dropped (casual)',
-    text: 'Word-final d is often dropped in casual speech. Not checked against Buenos Aires data.',
+    text: 'Word-final d dropped, as described for many Spanish varieties. No study of Buenos Aires final /d/ was found; one secondary source says Buenos Aires resists intervocalic /d/ loss.',
     example: 'verdad [beɾˈða], usted [uhˈte]',
-    source: 'General Latin American Spanish (recalled, not verified for Buenos Aires)',
+    source: 'General Spanish (recalled); searched for Buenos Aires data on 2026-10-23, none found',
     evidence: 'recalled',
   },
   r_infinitive: {
     title: 'Infinitive -r dropped (casual)',
     text: 'Some speakers drop the final r of infinitives in fast informal speech.',
     example: 'comer [koˈme]',
-    source: 'Wikipedia "Rioplatense Spanish", citing Baistrocchi 2020 and Gilbert & Rohena-Madrazo 2021',
+    source: 'Wikipedia "Rioplatense Spanish", citing Baistrocchi 2020; Gilbert & Rohena-Madrazo 2017 (abstract only)',
     evidence: 'secondary',
   },
   nj_merger: {

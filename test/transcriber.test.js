@@ -117,3 +117,21 @@ test('per-token rules are reported', () => {
   assert.ok(calle.rules.includes('sheismo'));
   assert.ok(r.rules.s_aspiration >= 1);
 });
+
+table('Prefix des-/tras- + silent h is not the digraph sh', [
+  ['deshielo', 'dehˈjelo'], ['deshacer', 'desaˈseɾ'], ['deshonesto', 'desoˈnehto'],
+  ['deshuesar', 'dehweˈsaɾ'], ['transhumante', 'tɾansuˈmante'], ['flash', 'ˈflaʃ'], ['sushi', 'ˈsuʃi'],
+]);
+
+table('English loans', [
+  ['shopping', 'ˈʃopin'], ['camping', 'ˈkampin'], ['rock', 'ˈrok'], ['pizza', 'ˈpisa'],
+  ['jean', 'ˈʃin'], ['sándwich', 'ˈsaŋɡwitʃ'], ['jogging', 'ˈʃoɣin'], ['marketing', 'ˈmaɾketin'],
+]);
+
+test('inferred /s/ cases have their own rule ids', () => {
+  const rules = (t) => transcribe(t).tokens.filter((x) => x.kind === 'word').flatMap((x) => x.rules);
+  assert.ok(rules('abstracto').includes('s_cluster'));
+  assert.ok(!rules('abstracto').includes('s_aspiration'));
+  assert.ok(rules('los huevos').includes('s_glide'));
+  assert.ok(rules('pasta').includes('s_aspiration'));
+});

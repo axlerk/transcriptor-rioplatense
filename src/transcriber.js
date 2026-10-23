@@ -35,7 +35,21 @@ const RESPELL = {
   méxico: 'méjico', mexicano: 'mejicano', mexicana: 'mejicana',
   mexicanos: 'mejicanos', mexicanas: 'mejicanas', texas: 'tejas',
   oaxaca: 'oajaca', ximena: 'jimena', shampoo: 'shampú',
+  // English loans as commonly said in Buenos Aires (docs/decisions.md D53)
+  jean: 'yin', jeans: 'yins', sandwich: 'sángüich', sándwich: 'sángüich',
+  jazz: 'yas', hall: 'jol', hobby: 'jobi', mail: 'méil', email: 'iméil',
+  freezer: 'frízer', jogging: 'yóguin', marketing: 'márketin',
 };
+
+// Prefixes ending in s before a silent h + vowel (des-hielo, des-hacer,
+// trans-humante): there s + h is not the digraph sh.
+const S_H_PREFIX = /^(des|dis|tras|trans)h[aeiouáéíóú]/;
+
+// Loan spellings that native Spanish never has: doubled consonant letters
+// and ck collapse to one sound; word-final -ng is [n] (camping [ˈkampin]).
+function normalizeLoanSpelling(w) {
+  return w.replace(/ck/g, 'k').replace(/([bdfgkmpstz])\1/g, '$1').replace(/ng$/, 'n');
+}
 
 // Unstressed function words: no stress mark (docs/phonology.md, Stress).
 const FUNCTION_WORDS = new Set([
@@ -70,7 +84,8 @@ const NOT_INFINITIVES = new Set([
 // Grapheme → phoneme
 
 function g2p(word) {
-  const w = RESPELL[word] ?? word;
+  const w = RESPELL[word] ?? normalizeLoanSpelling(word);
+  const prefixS = S_H_PREFIX.test(w) ? w.indexOf('h') - 1 : -1;
   const out = [];
   const add = (p, props = {}) => out.push({ p, ...props });
   const n = w.length;
@@ -79,7 +94,8 @@ function g2p(word) {
     if (VOWEL_LETTERS.has(c)) {
       const props = { v: true, acc: c in ACCENTED };
       // hi + vowel: a glide [j] that never becomes [ʃ]
-      if (c === 'i' && prev === 'h' && VOWEL_LETTERS.has(nx) && !'cs'.includes(w[i - 2] || '_')) {
+      if (c === 'i' && prev === 'h' && VOWEL_LETTERS.has(nx) &&
+          (!'cs'.includes(w[i - 2] || '_') || i - 2 === prefixS)) {
         props.hie = true;
       }
       add(ACCENTED[c] ?? (c === 'ü' ? 'u' : c), props);
@@ -116,7 +132,10 @@ function g2p(word) {
         else add('ɾ');
         break;
       case 's':
-        if (nx === 'h') { add('ʃ', { rule: 'sh' }); i++; } else add('s');
+        if (nx === 'h' && i !== prefixS) { add('ʃ', { rule: 'sh' }); i++; }
+        // des-hielo, des-huesar: the glide starts a new syllable, so /s/ stays in the coda
+        else if (i === prefixS && 'iu'.includes(nx2) && VOWEL_LETTERS.has(w[i + 3] ?? '')) add('s', { forceCoda: true });
+        else add('s');
         break;
       case 't': add('t'); break;
       case 'w': add('w', { rule: 'glide' }); break;
@@ -207,6 +226,7 @@ function syllabify(segs) {
     let split = L - 1; // index where the next onset starts
     if (L >= 2 && validOnset(cluster[L - 2], cluster[L - 1])) split = L - 2;
     if (L === 0) split = 0;
+    if (cluster[L - 1]?.forceCoda) split = L;
     syls[v].coda = cluster.slice(0, split);
     syls[v + 1].onset = cluster.slice(split);
   };
@@ -230,7 +250,7 @@ function stressIndex(syls, word) {
 function analyzeWord(word, opts) {
   const segs = g2p(word);
   const syls = syllabify(segs);
-  const spelled = RESPELL[word] ?? word;
+  const spelled = RESPELL[word] ?? normalizeLoanSpelling(word);
   const rules = new Set();
   syls.forEach((s) => { s.stress = 0; });
 
@@ -323,7 +343,11 @@ function realizePhrase(words, opts) {
       else aspirate = !startsWithNucleus(words[next.wi]);
       if (aspirate) {
         ph = 'h';
-        w.rules.add(!next ? 's_pause' : 's_aspiration');
+        // Inferred cases get their own rule cards (docs/decisions.md D16, D17).
+        if (!next) w.rules.add('s_pause');
+        else if (next.role === 'G') w.rules.add('s_glide');
+        else if (prev && !prev.v && prev.coda && prev.wi === s.wi) w.rules.add('s_cluster');
+        else w.rules.add('s_aspiration');
       }
     } else if (s.p === 'ɲ' && opts.njMerger) {
       ph = 'nj'; w.rules.add('nj_merger');
