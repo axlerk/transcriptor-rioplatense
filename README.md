@@ -54,6 +54,11 @@ Workers Builds runs `npm run build:ci` (tests, then build) and
 `npx wrangler deploy`. A failing test stops the build, and production keeps
 the previous version. `npm run deploy` does the same by hand.
 
+The trigger (branch `main` only, so no preview builds; build cache off)
+was created on 2026-10-23 through the Workers Builds API with the token in
+the Keychain item `cloudflare-workers-ci`. A manual build that day cloned
+the repo, passed 15/15 tests, built and deployed (version `49e89b3e`).
+
 Security headers (hash-based CSP, HSTS and others) are generated into
 `dist/site/_headers`. Why vanilla JS, and what the audit measured:
 [docs/audit.md](docs/audit.md).
