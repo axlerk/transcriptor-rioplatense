@@ -2,7 +2,9 @@
 
 This file is the specification for `src/transcriber.js`. Every rule names its
 source and how solid that source is, so a later reader can tell a measured
-fact from a remembered one.
+fact from a remembered one. Every decision, with its date and status, is
+logged in [decisions.md](decisions.md); the Sources list below is the
+project's single bibliography.
 
 ## Evidence levels
 
@@ -30,7 +32,36 @@ fact from a remembered one.
   Buenos Aires and Southern Chilean Spanish. Abstract only.
 - **[WP]** Wikipedia, "Rioplatense Spanish", Phonology section (secondary).
   Cites Coloma 2018, Lipski 1988, Fontanella de Weinberg 1974, Baistrocchi
-  2020, Gilbert & Rohena-Madrazo 2021.
+  2020, Gilbert & Rohena-Madrazo 2021. The Gilbert & Rohena-Madrazo chapter
+  we located is dated 2017 ([GRM17]); the 2021 year may be a different work
+  or a citation error.
+- **[T78]** Tracy D. Terrell (1978), "La aspiración y elisión de /s/ en el
+  español porteño", *Anuario de Letras* 16, 41–66. Read in full:
+  <https://revistas-filologicas.unam.mx/anuario-letras/index.php/al/article/download/388/386>.
+  24 educated porteños, semi-informal conversation, 14,703 /s/ tokens.
+  Rates by context are in [research-2026-10-23.md](research-2026-10-23.md).
+- **[F73]** Beatriz Fontanella de Weinberg (1973), "Comportamiento ante -s de
+  hablantes femeninos y masculinos del español bonaerense", *Romance
+  Philology* 27, 50–58. Not read; known only from [T78]'s summary.
+- **[CC]** Germán Coloma & Laura Colantoni, "La aspiración de /s/ en el
+  español rioplatense: tango vs. rock" (ALFAL paper). Read in full:
+  <https://ucema.edu.ar/~gcoloma/aspiracion-tango-rock-alfal.pdf>.
+- **[DCG11]** Manuel Díaz-Campos & Michael Gradoville (2011), "An analysis
+  of frequency as a factor contributing to the diffusion of variable
+  phenomena: Evidence from Spanish data", *Selected Proceedings of the 13th
+  Hispanic Linguistics Symposium*, ed. L. A. Ortiz-López, 224–238.
+  Cascadilla: <http://www.lingref.com/cpp/hls/13/paper2490.pdf>. Data
+  sections read. Its /d/ data is from Caracas, not Buenos Aires.
+- **[GRM17]** Gilbert & Rohena-Madrazo (2017), "Revising the canon: Social
+  and stylistic variation of coda (-ɾ) in Buenos Aires Spanish", *Romance
+  Languages and Linguistic Theory* 12, ch. 5. Not read (publisher returned
+  HTTP 403); known from search snippets of the abstract.
+- **[L94]** John Lipski (1994), *Latin American Spanish*, p. 190. Not read;
+  known from a secondary overview: Buenos Aires and Montevideo resist
+  intervocalic /d/ elision.
+- **[SIL]** "Reglas de silabación", <http://elies.rediris.es/elies4/Fon2.htm>.
+  Search snippet only: /bs/, /ns/, /rs/ codas in learned prefixes may reduce
+  to /s/. General Spanish, not Rioplatense.
 - **[MACK]** Ian Mackenzie, "Rioplatense Spanish",
   <https://www.staff.ncl.ac.uk/i.e.mackenzie/rioplat.htm> (secondary).
 
@@ -103,7 +134,9 @@ nonsyllabic allophones [e̯ o̯].
    (i, u < e, o < a; on a tie, the first) becomes nonsyllabic, regardless of
    stress. C18: *era el* `'se·ɾae̯ l`, *lograra obligar* `'ɣɾa·ɾao̯  βli`,
    *pasó un* `pa·'sow`, *brilló el* `βɾi·'ʃo̯ el`, *e inmediatamente*
-   `ejn·me`. Identical vowels are only linked, not reduced. The conjunction
+   `ejn·me`. Identical vowels are only linked, not reduced. A stressed
+   /i/ or /u/ is not made a glide (*la uva* [la‿ˈuβa]): **inferred**, no
+   example in C18. The conjunction
    *y* before a vowel becomes [j] and attaches to the next word (*y el*
    [jel]).
 7. **Linking** [C18 verified]. A word-final consonant before a vowel-initial
@@ -133,9 +166,9 @@ nonsyllabic allophones [e̯ o̯].
 
 | Option | Effect | Evidence |
 |---|---|---|
-| /s/ before a pause → [h] | *vamos.* [ˈbamoh] | Secondary: WP citing C18 and Lipski 1988 ("popular speech … before a consonant or pause") |
-| Drop word-final /d/ | *verdad* [beɾˈða] | **Recalled**, general Latin American Spanish. Not verified for Buenos Aires. The search found -d- deletion data only for Spain and Caracas |
-| Drop infinitive-final /ɾ/ | *comer* [koˈme] | Secondary: WP citing Baistrocchi 2020, Gilbert & Rohena-Madrazo 2021 |
+| /s/ before a pause → [h] | *vamos.* [ˈbamoh] | Verified as a **minority** variant: in [T78] pre-pausal /s/ is [s] 78%, [h] 11%, deleted 11% among educated porteños. WP's "strong tendency" in popular speech is not supported for educated speech |
+| Drop word-final /d/ | *verdad* [beɾˈða] | **Recalled**, general Latin American Spanish. No Buenos Aires source found (searched 2026-10-23); [DCG11] has Caracas data only; [L94] (secondary) says BA resists intervocalic /d/ elision |
+| Drop infinitive-final /ɾ/ | *comer* [koˈme] | Secondary: WP citing Baistrocchi 2020; [GRM17] (abstract only) reports coda /ɾ/ deletion in informal speech, unclear whether infinitives were analysed |
 | /ɲ/ → [nj] | *huraño* = *uranio* | C18 verified ("many young Argentinians") |
 
 ## Deliberately out of scope
