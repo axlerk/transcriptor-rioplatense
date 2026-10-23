@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Transcriptor fonético rioplatense: documento para revisión</title>
+<style>
+@font-face { font-family: "Rio IPA Serif"; font-weight: 400; src: url(file:///Users/axlerk/Developer/transcriptor-rioplatense/fonts/rio-serif-400.woff2) format("woff2"); }
+@font-face { font-family: "Rio IPA Serif"; font-weight: 400; font-style: italic; src: url(file:///Users/axlerk/Developer/transcriptor-rioplatense/fonts/rio-serif-400i.woff2) format("woff2"); }
+@font-face { font-family: "Rio IPA Serif"; font-weight: 700; src: url(file:///Users/axlerk/Developer/transcriptor-rioplatense/fonts/rio-serif-700.woff2) format("woff2"); unicode-range: U+0020-017F, U+2010-2027; }
+/* The bold serif subset has no IPA glyphs; headings borrow the regular ones for IPA ranges. */
+@font-face { font-family: "Rio IPA Serif"; font-weight: 700; src: url(file:///Users/axlerk/Developer/transcriptor-rioplatense/fonts/rio-serif-400.woff2) format("woff2"); unicode-range: U+0250-02FF, U+0300-036F, U+03B2, U+203F, U+2190-2193; }
+@font-face { font-family: "Rio UI Sans"; font-weight: 400; src: url(file:///Users/axlerk/Developer/transcriptor-rioplatense/fonts/rio-sans-400.woff2) format("woff2"); }
+@font-face { font-family: "Rio UI Sans"; font-weight: 600; src: url(file:///Users/axlerk/Developer/transcriptor-rioplatense/fonts/rio-sans-600.woff2) format("woff2"); }
+@page { size: A4; margin: 20mm 18mm 20mm 18mm;
+  @bottom-center { content: counter(page) " / " counter(pages); font: 8.5pt "Rio UI Sans", sans-serif; color: #586874; } }
+:root { --ink: #13212c; --muted: #586874; --line: #d2dbe2; --celeste: #2a6b96; --ok: #2d7a4c; --warn: #9a6200; --risk: #b0443a; }
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--ink); font: 10.5pt/1.5 "Rio IPA Serif", serif; }
+h1, h2, h3, th, .ev, .meta, .id, .refs { font-family: "Rio UI Sans", "Rio IPA Serif", sans-serif; }
+h1 { font-size: 22pt; line-height: 1.15; margin: 0 0 4mm; }
+h1 em { color: var(--celeste); font-family: "Rio IPA Serif", serif; }
+h2 { font-size: 14pt; margin: 9mm 0 3mm; padding-bottom: 1.5mm; border-bottom: 1px solid var(--line); break-after: avoid; }
+h3 { font-size: 11pt; margin: 5mm 0 2mm; break-after: avoid; }
+p { margin: 0 0 2.5mm; }
+.ipa { font-family: "Rio IPA Serif", serif; }
+.meta { color: var(--muted); font-size: 9pt; margin-bottom: 8mm; }
+.meta div { margin: 0.5mm 0; }
+.lede { font-size: 11.5pt; }
+table { width: 100%; border-collapse: collapse; margin: 1mm 0 3mm; font-size: 9.5pt; break-inside: auto; }
+tr { break-inside: avoid; }
+th { text-align: left; font-weight: 600; font-size: 8.5pt; color: var(--muted); border-bottom: 1px solid var(--line); padding: 1.5mm 2mm; }
+td { vertical-align: top; padding: 1.4mm 2mm; border-bottom: 1px solid #edf1f4; }
+td.id { font-family: "Rio UI Sans", sans-serif; font-weight: 600; white-space: nowrap; width: 11mm; }
+td.src { color: var(--muted); width: 34%; }
+table.dec td.src { width: 28%; }
+td.ipa { font-size: 10.5pt; }
+.ev { display: inline-block; font-size: 7.5pt; text-transform: uppercase; letter-spacing: 0.04em; border: 1px solid currentColor; border-radius: 2px; padding: 0.3mm 1.2mm; white-space: nowrap; }
+.ev-ok { color: var(--ok); } .ev-warn { color: var(--warn); } .ev-risk { color: var(--risk); } .ev-neutral { color: var(--muted); }
+.q { break-inside: avoid; margin-bottom: 4mm; }
+.q .id { color: var(--celeste); }
+.q .refs { font-weight: 400; color: var(--muted); font-size: 8.5pt; margin-left: 2mm; }
+.q table.ex td:first-child { width: 38%; }
+.ask { background: #eef3f7; padding: 2mm 3mm; border-left: 2px solid var(--celeste); }
+ul { margin: 0 0 3mm; padding-left: 5mm; }
+li { margin: 0.8mm 0; }
+.pagebreak { break-before: page; }
+</style>
+</head>
+<body>
+<h1>Transcriptor fonético <em>rioplatense</em></h1>
+<div class="meta">
+  <div>Documento para revisión especializada · 23 de octubre de 2026</div>
+  <div>Servicio: rioplatense.onegoodman.studio · Código: github.com/axlerk/transcriptor-rioplatense (versión 7811075)</div>
+</div>
+
+<p class="lede">El servicio convierte texto en español a transcripción fonética (AFI) según la pronunciación del Río de la Plata (Buenos Aires y Montevideo). Este documento describe cómo funciona, qué decisiones se tomaron y con qué fuentes, y qué puntos quedan abiertos. Le pedimos su opinión sobre esos puntos, en especial las preguntas P1–P13 de la sección 4.</p>
+
+<h2>1. Qué hace el servicio</h2>
+<ul>
+  <li>Transcripción <b>fonética</b> [ ] por defecto, con alófonos, resilabeo y sinalefa; también <b>fonológica</b> / /.</li>
+  <li>Variedad por defecto: habla formal culta de Buenos Aires, tal como la describe Coloma (2018). Los rasgos coloquiales se activan como opciones.</li>
+  <li>Al pasar el cursor sobre una palabra se ven sus dos transcripciones y las reglas aplicadas. Cada regla indica su fuente y su nivel de evidencia: verificado en la fuente primaria, tomado de una fuente secundaria o inferido por nosotros.</li>
+  <li>Síntesis de voz con las voces del dispositivo, con preferencia por es-AR y es-UY. La voz no forma parte de lo que se revisa: la referencia es la transcripción.</li>
+  <li>Fuera de alcance: entonación y rasgos del norte y del oeste argentinos.</li>
+</ul>
+
+<h3>Proceso</h3>
+<ul>
+  <li><b>Grafema → fonema</b>: seseo, /ʃ/ para ll e y, hi + vocal → /i/, x → /ks/, préstamos con grafías adaptadas.</li>
+  <li><b>Silabeo y acento</b>: diptongos y hiatos según la tilde; acento léxico por reglas ortográficas; palabras funcionales sin marca; doble acento en -mente.</li>
+  <li><b>Alofonía en el grupo fónico</b> (entre pausas): aproximantes [β ð ɣ], asimilación nasal, aspiración de /s/ ante consonante, sinalefa y enlace marcados con ‿.</li>
+</ul>
+
+<h3>Opciones</h3>
+<table><thead><tr><th>Opción</th><th>Texto</th><th>Resultado</th></tr></thead><tbody><tr><td>por defecto</td><td>Vamos con los chicos.</td><td class="ipa">[ˈbamoh kon loh ˈtʃikos.]</td></tr><tr><td>/s/ ante pausa → [h]</td><td>Vamos con los chicos.</td><td class="ipa">[ˈbamoh kon loh ˈtʃikoh.]</td></tr><tr><td>elisión de /d/ final</td><td>Usted tiene razón, la verdad.</td><td class="ipa">[uhˈte ˈtjene raˈson, la βeɾˈða.]</td></tr><tr><td>elisión de /ɾ/ en infinitivo</td><td>Quiero comer.</td><td class="ipa">[ˈkjeɾo koˈme.]</td></tr><tr><td>žeísmo [ʒ]</td><td>La calle está llena.</td><td class="ipa">[la ˈkaʒe‿ehˈta ˈʒena.]</td></tr><tr><td>ñ → nj</td><td>Mañana</td><td class="ipa">[maˈnjana]</td></tr><tr><td>transcripción fonológica</td><td>El viento norte</td><td class="ipa">/el ˈbiento ˈnoɾte/</td></tr></tbody></table>
+
+<h2>2. Validación</h2>
+<p>Las tablas de palabras de Coloma (2018) y fragmentos de su transcripción semiestrecha de «El viento norte y el sol» son pruebas automáticas (18 pruebas, todas superadas en la versión 7811075). Las diferencias que quedan son de notación: Coloma traslada los segmentos resilabeados a la palabra siguiente y separa sílabas con ·; nosotros mantenemos los límites de palabra y marcamos el enlace con ‿.</p>
+<table><thead><tr><th>Texto</th><th>Coloma (2018), semiestrecha</th><th>Este servicio</th></tr></thead><tbody><tr><td>El viento norte y el sol discutían sobre cuál de ellos era el más fuerte</td><td class="ipa">el 'βjen·to 'noɾ·te jel 'sol dih·ku·'ti·an so·βɾe 'kwal 'de·ʃo 'se·ɾae̯ l 'mah 'fweɾ·te</td><td class="ipa">el ˈβjento ˈnoɾte j‿el ˈsol dihkuˈtian soβɾe ˈkwal de‿ˈeʃos‿ˈeɾa‿e̯l ˈmah ˈfweɾte</td></tr><tr><td>cuando pasó un extraño viajero envuelto en una ancha capa</td><td class="ipa">kwan·do pa·'sow neks·'tɾa·ɲo βja·'xe·ɾo̯ em 'bwel·to̯ e 'nu·na 'aɲ·tʃa 'ka·pa</td><td class="ipa">kwando paˈso‿wn‿eksˈtɾaɲo βjaˈxeɾo̯‿emˈbwelto̯‿en‿ˈuna‿ˈaɲtʃa ˈkapa</td></tr><tr><td>la superioridad del sol</td><td class="ipa">la su·pe·ɾjo·ɾi·'ða·ðel 'sol</td><td class="ipa">la supeɾjoɾiˈðað ðel ˈsol</td></tr></tbody></table>
+<p>Comparación con el transcriptor de referencia (unalengua.com, «Spanish», es-US, consultado el 23 de octubre de 2026). Su salida para estas palabras se tomó de una frase de prueba más larga; muestra rasgos castellanos y marca el acento antes de la vocal:</p>
+<table><thead><tr><th>Texto</th><th>Referencia</th><th>Este servicio</th></tr></thead><tbody><tr><td>Ciudad, calle, hielo, huevo, gente.</td><td class="ipa">θjuðˈad, kˈaʎe, jˈelo, wˈeβo, xˈɛnte.</td><td class="ipa">sjuˈðað, ˈkaʃe, ˈjelo, ˈweβo, ˈxente.</td></tr></tbody></table>
+
+<h2 class="pagebreak">3. Decisiones adoptadas</h2>
+<p>Registro completo de decisiones (D1–D57). Los números coinciden con docs/decisions.md del repositorio. Niveles de evidencia: <span class="ev ev-ok">verificado</span> comprobado en la fuente primaria; <span class="ev ev-warn">secundario</span> tomado de un resumen de una fuente no leída; <span class="ev ev-risk">inferido</span> razonamiento propio o fonética general; <span class="ev ev-neutral">notación</span> decisión de presentación; <span class="ev ev-risk">abierto</span> pendiente; <span class="ev ev-neutral">superado</span> reemplazado por una decisión posterior.</p>
+
+  <h3>Variedad y fonemas</h3>
+  <table class="dec">
+    <thead><tr><th>N.º</th><th>Decisión</th><th>Fuente</th><th>Evidencia</th></tr></thead>
+    <tbody><tr><td class="id">D1</td><td>Variedad por defecto: habla formal culta de Buenos Aires según C18; los rasgos coloquiales son opcionales</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D2</td><td>Seseo: z, ce, ci → /s/; no hay /θ/</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D3</td><td>Sin /ʎ/: ll e y ante vocal → un solo fonema /ʃ/</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D4</td><td>Realización por defecto [ʃ]; [ʒ] como opción (hablantes mayores, Montevideo)</td><td class="src">C18, MICH (resumen)</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D5</td><td>hi + vocal → [j], nunca [ʃ]: hierro y yerro se distinguen; hu + vocal → [w]</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D6</td><td>La grafía sh → [ʃ] también en el modo [ʒ]</td><td class="src">C18 (cita a Fontanella 1987)</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D7</td><td>/x/ velar [x], nunca [h]</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D8</td><td>/r/ vibrante múltiple [r], sin asibilación (rasgo del norte)</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D9</td><td>/tʃ/ se mantiene [tʃ], nunca [ʃ]</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D10</td><td>x → /ks/; x inicial → /s/; México, Texas, Oaxaca, Ximena → /x/</td><td class="src">C18 (/ks/); resto, español general</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D11</td><td>ps- inicial → /s/ (psicólogo)</td><td class="src">español general</td><td><span class="ev ev-risk">inferido</span></td></tr></tbody>
+  </table>
+  <h3>/s/</h3>
+  <table class="dec">
+    <thead><tr><th>N.º</th><th>Decisión</th><th>Fuente</th><th>Evidencia</th></tr></thead>
+    <tbody><tr><td class="id">D12</td><td>/s/ → [h] ante cualquier consonante, dentro de la palabra y entre palabras</td><td class="src">C18; T78 (80 % interna, 69 % final ante C)</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D13</td><td>/s/ ante vocal (también de la palabra siguiente) y ante pausa → [s]</td><td class="src">C18; T78 (88 % y 78 %)</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D14</td><td>La /s/ de /ks/ se mantiene [s] (extraño [eksˈtɾaɲo])</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D15</td><td>/s/ + /s/ → una sola [s] (más soplaba)</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D16</td><td>/s/ ante deslizada inicial de palabra (los huevos) → [h]</td><td class="src">—</td><td><span class="ev ev-risk">inferido</span></td></tr><tr><td class="id">D17</td><td>/s/ en coda doble (abstracto, instante) recibe la misma regla de aspiración</td><td class="src">— (CC excluye estos grupos; SIL sugiere reducción a /s/)</td><td><span class="ev ev-risk">abierto</span></td></tr><tr><td class="id">D18</td><td>No se modela la elisión de /s/ final ante consonante (20 % en T78)</td><td class="src">T78</td><td><span class="ev ev-ok">verificado</span></td></tr></tbody>
+  </table>
+  <h3>Otras consonantes</h3>
+  <table class="dec">
+    <thead><tr><th>N.º</th><th>Decisión</th><th>Fuente</th><th>Evidencia</th></tr></thead>
+    <tbody><tr><td class="id">D19</td><td>/b d ɡ/ oclusivas tras pausa y tras nasal; /d/ también tras /l/; aproximantes en los demás contextos, también entre palabras</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D20</td><td>Aproximantes escritas [β ð ɣ] (convención de C18); [β̞ ð̞ ɣ̞] como opción</td><td class="src">C18</td><td><span class="ev ev-neutral">notación</span></td></tr><tr><td class="id">D21</td><td>/n/ → [m] ante /p b/, [ŋ] ante /k ɡ x/, [ɲ] ante /tʃ/</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D22</td><td>/n/ → [ɱ] ante /f/ (C18 escribe [m])</td><td class="src">fonética general del español</td><td><span class="ev ev-risk">inferido</span></td></tr><tr><td class="id">D23</td><td>/n/ ante /m/ se mantiene [n] (inmediatamente)</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D24</td><td>/n/ ante /ʃ/ se mantiene [n] (con llave)</td><td class="src">—</td><td><span class="ev ev-risk">inferido</span></td></tr></tbody>
+  </table>
+  <h3>Vocales y habla conectada</h3>
+  <table class="dec">
+    <thead><tr><th>N.º</th><th>Decisión</th><th>Fuente</th><th>Evidencia</th></tr></thead>
+    <tbody><tr><td class="id">D25</td><td>i/u átonas junto a vocal → [j w]; con dos vocales altas, núcleo la segunda (salvo y final); la tilde mantiene el hiato</td><td class="src">C18; ortografía</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D26</td><td>Deslizadas [j w] a ambos lados del núcleo; [i̯ u̯] tras el núcleo como opción</td><td class="src">C18</td><td><span class="ev ev-neutral">notación</span></td></tr><tr><td class="id">D27</td><td>Sinalefa: la vocal menos sonora (i, u &lt; e, o &lt; a; empate: la primera) se vuelve no silábica, aun si es tónica</td><td class="src">C18 (brilló el <span class="ipa">βɾi·'ʃo̯ el</span>)</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D28</td><td>Vocales idénticas entre palabras: se enlazan, no se reducen</td><td class="src">—</td><td><span class="ev ev-neutral">notación</span></td></tr><tr><td class="id">D29</td><td>Una /i/ o /u/ tónica no se vuelve deslizada en sinalefa (la uva)</td><td class="src">—</td><td><span class="ev ev-risk">inferido</span></td></tr><tr><td class="id">D30</td><td>La conjunción y ante vocal → [j], enlazada solo hacia adelante</td><td class="src">C18 (<span class="ipa">'noɾ·te jel</span>)</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D31</td><td>Resilabeo y sinalefa se marcan con ‿ en lugar de mover segmentos, para conservar los límites de palabra</td><td class="src">—</td><td><span class="ev ev-neutral">notación</span></td></tr><tr><td class="id">D32</td><td>/ɲ/ se mantiene [ɲ] por defecto; la fusión con /nj/ es la opción D43</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr></tbody>
+  </table>
+  <h3>Acento</h3>
+  <table class="dec">
+    <thead><tr><th>N.º</th><th>Decisión</th><th>Fuente</th><th>Evidencia</th></tr></thead>
+    <tbody><tr><td class="id">D33</td><td>Marca de acento antes de la sílaba, no antes de la vocal</td><td class="src">práctica AFI; C18</td><td><span class="ev ev-neutral">notación</span></td></tr><tr><td class="id">D34</td><td>Se marcan los monosílabos léxicos; las palabras funcionales átonas no</td><td class="src">C18 (texto narrado)</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D35</td><td>Lista de palabras átonas más allá de las del texto de C18 (artículos, clíticos, preposiciones, conjunciones, relativos)</td><td class="src">español general</td><td><span class="ev ev-risk">inferido</span></td></tr><tr><td class="id">D36</td><td>un sin marca y una con marca, como en el texto de C18</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D37</td><td>Una palabra aislada recibe acento de cita aunque sea funcional (para [ˈpaɾa])</td><td class="src">C18 (tabla de palabras)</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D38</td><td>Adverbios en -mente: acento secundario en el adjetivo y primario en -men-</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D39</td><td>No se modela el desplazamiento del acento a los enclíticos (decímelo → decimeló)</td><td class="src">C18 (cita a Colantoni y Cuervo 2013)</td><td><span class="ev ev-ok">verificado</span></td></tr></tbody>
+  </table>
+  <h3>Opciones coloquiales</h3>
+  <table class="dec">
+    <thead><tr><th>N.º</th><th>Decisión</th><th>Fuente</th><th>Evidencia</th></tr></thead>
+    <tbody><tr><td class="id">D40</td><td>Opción: /s/ ante pausa → [h]</td><td class="src">WP (secundario)</td><td><span class="ev ev-neutral">superado</span></td></tr><tr><td class="id">D41</td><td>Opción: elisión de /d/ final</td><td class="src">español general</td><td><span class="ev ev-risk">inferido</span></td></tr><tr><td class="id">D42</td><td>Opción: elisión de /ɾ/ final de infinitivo, con lista de excepciones no verbales en -ar/-er/-ir</td><td class="src">WP; GRM17 (solo resumen)</td><td><span class="ev ev-warn">secundario</span></td></tr><tr><td class="id">D43</td><td>Opción: /ɲ/ → [nj] (hablantes jóvenes)</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D44</td><td>D40 recalificada: debilitamiento ante pausa minoritario en hablantes cultos (22 %: [h] 11 %, elisión 11 %)</td><td class="src">T78</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D45</td><td>Sin datos de /d/ final para Buenos Aires: DCG11 es de Caracas; L94 (secundario) dice que BA resiste la elisión de /d/ intervocálica</td><td class="src">DCG11, L94</td><td><span class="ev ev-risk">abierto</span></td></tr><tr><td class="id">D46</td><td>Gilbert y Rohena-Madrazo (2017) localizado pero no leído</td><td class="src">GRM17</td><td><span class="ev ev-risk">abierto</span></td></tr></tbody>
+  </table>
+  <h3>Fuera de alcance</h3>
+  <table class="dec">
+    <thead><tr><th>N.º</th><th>Decisión</th><th>Fuente</th><th>Evidencia</th></tr></thead>
+    <tbody><tr><td class="id">D47</td><td>No se representa la entonación (caída larga, interrogativas totales descendentes)</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D48</td><td>No se aplican rasgos del norte y del oeste ([ʑ] para /r/, [ʎ], [ç], [ʝ])</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D49</td><td>No se genera la [v] enfática para la grafía v</td><td class="src">C18</td><td><span class="ev ev-ok">verificado</span></td></tr></tbody>
+  </table>
+  <h3>Segunda revisión (tras la consulta de fuentes)</h3>
+  <table class="dec">
+    <thead><tr><th>N.º</th><th>Decisión</th><th>Fuente</th><th>Evidencia</th></tr></thead>
+    <tbody><tr><td class="id">D50</td><td>Tras des-, dis-, tras-, trans- ante h + vocal, s + h no es el dígrafo sh: la h es muda (antes deshielo salía [deˈʃjelo])</td><td class="src">ortografía</td><td><span class="ev ev-risk">inferido</span></td></tr><tr><td class="id">D51</td><td>En ese caso, ante hie-/hue- la /s/ queda en coda y se aspira (deshielo [dehˈjelo]); ante otra vocal se resilabea (deshacer)</td><td class="src">—</td><td><span class="ev ev-risk">inferido</span></td></tr><tr><td class="id">D52</td><td>Préstamos: consonantes dobles y ck valen una consonante; -ng final → [n]; el acento se calcula sobre esa grafía (shopping [ˈʃopin])</td><td class="src">— (pronunciaciones recordadas)</td><td><span class="ev ev-risk">inferido</span></td></tr><tr><td class="id">D53</td><td>Grafías adaptadas para préstamos frecuentes: jean(s), sándwich, jazz, hall, hobby, mail, email, freezer, jogging, marketing</td><td class="src">— (recordado)</td><td><span class="ev ev-risk">inferido</span></td></tr><tr><td class="id">D54</td><td>La opción «/s/ ante pausa → [h]» se mantiene, rotulada como variante minoritaria con los datos de T78</td><td class="src">T78</td><td><span class="ev ev-ok">verificado</span></td></tr><tr><td class="id">D55</td><td>La opción de elisión de /d/ final se mantiene, rotulada como no verificada</td><td class="src">DCG11, L94</td><td><span class="ev ev-risk">abierto</span></td></tr><tr><td class="id">D56</td><td>Los casos inferidos de /s/ (D16, D17) tienen su propia tarjeta en la interfaz, marcada «inferred»</td><td class="src">—</td><td><span class="ev ev-neutral">notación</span></td></tr><tr><td class="id">D57</td><td>En la línea de comandos, --casual activa las tres reglas coloquiales; ñ → nj es la opción aparte --nj (variante generacional, no de registro)</td><td class="src">C18</td><td><span class="ev ev-neutral">notación</span></td></tr></tbody>
+  </table>
+
+<h2 class="pagebreak">4. Puntos discutibles: preguntas para la revisión</h2>
+<p>Cada pregunta indica las decisiones a las que se refiere. Los ejemplos son la salida actual del servicio.</p>
+
+  <section class="q">
+    <h3><span class="id">P1</span> /s/ en coda doble <span class="refs">D17</span></h3>
+    <p>Aplicamos la aspiración de manera mecánica. Coloma y Colantoni excluyen estos grupos por infrecuentes; una fuente general sugiere reducción a /s/ en prefijos cultos.</p>
+    <table class="ex"><tbody><tr><td>abstracto</td><td class="ipa">[aβhˈtɾakto]</td></tr><tr><td>instante</td><td class="ipa">[inhˈtante]</td></tr><tr><td>obstáculo</td><td class="ipa">[oβhˈtakulo]</td></tr><tr><td>perspectiva</td><td class="ipa">[peɾhpekˈtiβa]</td></tr><tr><td>construir</td><td class="ipa">[konhˈtɾwiɾ]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿Cuáles son las realizaciones habituales en el habla culta porteña: [aβhˈtɾakto], [ahˈtɾakto], [asˈtɾakto]…? ¿Hay datos publicados?</p>
+  </section>
+  <section class="q">
+    <h3><span class="id">P2</span> /s/ ante deslizada inicial <span class="refs">D16, D51</span></h3>
+    <p>Tratamos la deslizada de hie-/hue- como consonante: /s/ se aspira y no se enlaza.</p>
+    <table class="ex"><tbody><tr><td>los huevos</td><td class="ipa">[loh ˈweβos]</td></tr><tr><td>las hierbas</td><td class="ipa">[lah ˈjeɾβas]</td></tr><tr><td>deshielo</td><td class="ipa">[dehˈjelo]</td></tr><tr><td>deshuesar</td><td class="ipa">[dehweˈsaɾ]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿Es habitual [loh ˈweβos] o predomina el resilabeo [lo ˈsweβos]? ¿Y [ɣw] en huevo ([ˈɣweβo])?</p>
+  </section>
+  <section class="q">
+    <h3><span class="id">P3</span> /s/ ante /t/ <span class="refs">D12</span></h3>
+    <p>T78 registra que ante /t/ se conserva la sibilante (o una mezcla [hs]) con más frecuencia que ante otras consonantes. Nosotros siempre escribimos [h].</p>
+    <table class="ex"><tbody><tr><td>pasta</td><td class="ipa">[ˈpahta]</td></tr><tr><td>este</td><td class="ipa">[ˈehte]</td></tr><tr><td>gusto</td><td class="ipa">[ˈɡuhto]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿Conviene una variante opcional con [s] ante /t/ para el registro formal?</p>
+  </section>
+  <section class="q">
+    <h3><span class="id">P4</span> /s/ ante pausa <span class="refs">D13, D44</span></h3>
+    <p>Por defecto [s]. La opción coloquial da [h]. En T78 (1978, 24 hablantes cultos) el debilitamiento ante pausa es del 22 %, repartido entre [h] y elisión.</p>
+    <table class="ex"><thead><tr><th>Texto</th><th>Por defecto</th><th>Con la opción</th></tr></thead><tbody><tr><td>Vamos.</td><td class="ipa">[ˈbamos.]</td><td class="ipa">[ˈbamoh.]</td></tr><tr><td>Son los chicos.</td><td class="ipa">[ˈson loh ˈtʃikos.]</td><td class="ipa">[ˈson loh ˈtʃikoh.]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿Siguen vigentes estas proporciones? ¿La variante debilitada más frecuente hoy es [h] o la elisión?</p>
+  </section>
+  <section class="q">
+    <h3><span class="id">P5</span> Elisión de /d/ final <span class="refs">D41, D45</span></h3>
+    <p>Opción no verificada: no encontramos estudios de /d/ final en Buenos Aires.</p>
+    <table class="ex"><thead><tr><th>Texto</th><th>Por defecto</th><th>Con la opción</th></tr></thead><tbody><tr><td>verdad</td><td class="ipa">[beɾˈðað]</td><td class="ipa">[beɾˈða]</td></tr><tr><td>usted</td><td class="ipa">[uhˈteð]</td><td class="ipa">[uhˈte]</td></tr><tr><td>ciudad</td><td class="ipa">[sjuˈðað]</td><td class="ipa">[sjuˈða]</td></tr><tr><td>Madrid</td><td class="ipa">[maˈðɾið]</td><td class="ipa">[maˈðɾi]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿Qué tan frecuente es [beɾˈða] / [uhˈte] en el habla culta porteña? ¿Hay alguna fuente?</p>
+  </section>
+  <section class="q">
+    <h3><span class="id">P6</span> Elisión de /ɾ/ en infinitivos <span class="refs">D42, D46</span></h3>
+    <p>Opción basada en fuentes secundarias; GRM17 (sobre /ɾ/ en coda en Buenos Aires) no pudo consultarse.</p>
+    <table class="ex"><thead><tr><th>Texto</th><th>Por defecto</th><th>Con la opción</th></tr></thead><tbody><tr><td>quiero comer</td><td class="ipa">[ˈkjeɾo koˈmeɾ]</td><td class="ipa">[ˈkjeɾo koˈme]</td></tr><tr><td>vamos a hablar</td><td class="ipa">[ˈbamos‿a‿aˈβlaɾ]</td><td class="ipa">[ˈbamos‿a‿aˈβla]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿La elisión se limita a infinitivos ante consonante o pausa? ¿Afecta también a sustantivos (mujer, lugar)?</p>
+  </section>
+  <section class="q">
+    <h3><span class="id">P7</span> Nasal ante /ʃ/ y ante /f/ <span class="refs">D22, D24</span></h3>
+    <p>Ante ll/y mantenemos [n]; ante /f/ escribimos [ɱ], aunque C18 escribe [m].</p>
+    <table class="ex"><tbody><tr><td>con llave</td><td class="ipa">[kon ˈʃaβe]</td></tr><tr><td>un yuyo</td><td class="ipa">[un ˈʃuʃo]</td></tr><tr><td>enfermo</td><td class="ipa">[eɱˈfeɾmo]</td></tr><tr><td>un fósforo</td><td class="ipa">[uɱ ˈfohfoɾo]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿Hay asimilación palatal ante [ʃ]? ¿[ɱ] o [m] ante /f/?</p>
+  </section>
+  <section class="q">
+    <h3><span class="id">P8</span> Sinalefa <span class="refs">D27, D28, D29</span></h3>
+    <p>Regla de sonoridad (i, u &lt; e, o &lt; a), sin tener en cuenta el acento, salvo /i u/ tónicas, que no se vuelven deslizadas. Las vocales idénticas solo se enlazan.</p>
+    <table class="ex"><tbody><tr><td>era el más fuerte</td><td class="ipa">[ˈeɾa‿e̯l ˈmah ˈfweɾte]</td></tr><tr><td>la uva</td><td class="ipa">[la‿ˈuβa]</td></tr><tr><td>de ellos</td><td class="ipa">[de‿ˈeʃos]</td></tr><tr><td>pasó un viajero</td><td class="ipa">[paˈso‿wm bjaˈxeɾo]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿La regla describe bien el habla porteña? ¿Se fusionan las vocales idénticas ([de‿ˈeʃos] → [ˈdeʃos])?</p>
+  </section>
+  <section class="q">
+    <h3><span class="id">P9</span> Acento de las palabras funcionales <span class="refs">D34, D35, D36</span></h3>
+    <p>Seguimos el texto de C18 (un átono, una tónico) y completamos la lista con criterios generales.</p>
+    <table class="ex"><tbody><tr><td>un amigo</td><td class="ipa">[un‿aˈmiɣo]</td></tr><tr><td>una amiga</td><td class="ipa">[ˈuna‿aˈmiɣa]</td></tr><tr><td>cuando llegues</td><td class="ipa">[kwando ˈʃeɣes]</td></tr><tr><td>para vos</td><td class="ipa">[paɾa ˈβos]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿Es correcta la lista de átonas? ¿un es átono en el habla porteña?</p>
+  </section>
+  <section class="q">
+    <h3><span class="id">P10</span> Enclíticos <span class="refs">D39</span></h3>
+    <p>No modelamos el desplazamiento del acento que C18 describe como relativamente común.</p>
+    <table class="ex"><tbody><tr><td>decímelo</td><td class="ipa">[deˈsimelo]</td></tr><tr><td>dámelo</td><td class="ipa">[ˈdamelo]</td></tr><tr><td>contame</td><td class="ipa">[konˈtame]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿Conviene ofrecer decimeló como opción coloquial? ¿Con qué alcance?</p>
+  </section>
+  <section class="q">
+    <h3><span class="id">P11</span> Préstamos del inglés <span class="refs">D52, D53</span></h3>
+    <p>Pronunciaciones recordadas, no verificadas.</p>
+    <table class="ex"><tbody><tr><td>shopping</td><td class="ipa">[ˈʃopin]</td></tr><tr><td>jean</td><td class="ipa">[ˈʃin]</td></tr><tr><td>sándwich</td><td class="ipa">[ˈsaŋɡwitʃ]</td></tr><tr><td>camping</td><td class="ipa">[ˈkampin]</td></tr><tr><td>marketing</td><td class="ipa">[ˈmaɾketin]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿Son las formas habituales en Buenos Aires? ¿Qué préstamos frecuentes faltan?</p>
+  </section>
+  <section class="q">
+    <h3><span class="id">P12</span> hie- inicial <span class="refs">D5</span></h3>
+    <p>Seguimos C18 (hierro [ˈjero]). Fuera de C18 no comprobamos si hielo puede pronunciarse con [ʃ]/[ʒ].</p>
+    <table class="ex"><tbody><tr><td>hielo</td><td class="ipa">[ˈjelo]</td></tr><tr><td>hierba</td><td class="ipa">[ˈjeɾβa]</td></tr><tr><td>hierro</td><td class="ipa">[ˈjero]</td></tr><tr><td>yerro</td><td class="ipa">[ˈʃero]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿La distinción hierro/yerro es general entre hablantes jóvenes?</p>
+  </section>
+  <section class="q">
+    <h3><span class="id">P13</span> Convenciones de notación <span class="refs">D20, D26, D31</span></h3>
+    <p>[β ð ɣ] sin diacrítico, ‿ para resilabeo y sinalefa, [j w] a ambos lados del núcleo, ɡ tipográfica.</p>
+    <table class="ex"><tbody><tr><td>el viento y el sol</td><td class="ipa">[el ˈβjento j‿el ˈsol]</td></tr><tr><td>baile</td><td class="ipa">[ˈbajle]</td></tr><tr><td>nada</td><td class="ipa">[ˈnaða]</td></tr></tbody></table>
+    <p class="ask"><b>Pregunta.</b> ¿Son adecuadas para un público de estudiantes de ELE? ¿Preferiría otra convención?</p>
+  </section>
+
+<h2>5. Fuentes consultadas</h2>
+<p>Para cada fuente se indica qué se leyó realmente.</p>
+<table><thead><tr><th>Clave</th><th>Referencia</th><th>Lectura</th></tr></thead><tbody><tr><td class="id">C18</td><td>Coloma, Germán (2018). «Argentine Spanish». <i>Journal of the International Phonetic Association</i>, Illustrations of the IPA. Copia del autor: ucema.edu.ar/u/gcoloma/ArgentineSpanish.pdf</td><td class="src">Leído completo (copia del autor; año y páginas según la cita de Wikipedia, no verificados en la revista). Fuente principal; sus tablas y su transcripción del texto «El viento norte y el sol» son casos de prueba automáticos.</td></tr><tr><td class="id">T78</td><td>Terrell, Tracy D. (1978). «La aspiración y elisión de /s/ en el español porteño». <i>Anuario de Letras</i> 16, 41–66.</td><td class="src">Leído completo.</td></tr><tr><td class="id">CC</td><td>Coloma, Germán y Laura Colantoni. «La aspiración de /s/ en el español rioplatense: tango vs. rock». Ponencia ALFAL.</td><td class="src">Leído completo.</td></tr><tr><td class="id">DCG11</td><td>Díaz-Campos, Manuel y Michael Gradoville (2011). «An Analysis of Frequency as a Factor Contributing to the Diffusion of Variable Phenomena: Evidence from Spanish Data». <i>Selected Proceedings of the 13th Hispanic Linguistics Symposium</i>, 224–238.</td><td class="src">Leídas las secciones de datos (los datos de /d/ son de Caracas).</td></tr><tr><td class="id">MICH</td><td>Michnowicz, Jim. «Sheísmo in Montevideo Spanish: Not (yet) identical to Buenos Aires». John Benjamins, IHLL 29, cap. 7.</td><td class="src">Solo el resumen.</td></tr><tr><td class="id">GRM17</td><td>Gilbert y Marcos Rohena-Madrazo (2017). «Revising the canon: Social and stylistic variation of coda (-ɾ) in Buenos Aires Spanish». <i>Romance Languages and Linguistic Theory</i> 12, cap. 5.</td><td class="src">No leído (acceso denegado); solo fragmentos del resumen.</td></tr><tr><td class="id">F73</td><td>Fontanella de Weinberg, Beatriz (1973). «Comportamiento ante -s de hablantes femeninos y masculinos del español bonaerense». <i>Romance Philology</i> 27, 50–58.</td><td class="src">No leído; conocido por el resumen de T78.</td></tr><tr><td class="id">L94</td><td>Lipski, John (1994). <i>Latin American Spanish</i>, p. 190.</td><td class="src">No leído; citado en una reseña secundaria.</td></tr><tr><td class="id">SIL</td><td>«Reglas de silabación», elies.rediris.es/elies4/Fon2.htm.</td><td class="src">Solo un fragmento de búsqueda.</td></tr><tr><td class="id">WP</td><td>Wikipedia, «Rioplatense Spanish», sección de fonología.</td><td class="src">Fuente secundaria.</td></tr></tbody></table>
+<p>También se buscaron, sin resultado, estudios sobre la /d/ final en Buenos Aires y sobre la /s/ en codas dobles en el español rioplatense (búsqueda del 23 de octubre de 2026). Agradeceremos cualquier referencia.</p>
+
+<h2>6. Cómo enviar comentarios</h2>
+<p>Basta con citar el número de la pregunta (P1–P13) o de la decisión (D1–D57). El servicio puede probarse en rioplatense.onegoodman.studio con cualquier texto; el botón «North Wind and Sun» carga el texto completo de Coloma (2018).</p>
+</body>
+</html>
