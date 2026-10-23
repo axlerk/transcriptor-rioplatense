@@ -8,8 +8,13 @@
     "transcribe-rioplatense": "bin/transcribe.js"
   },
   "scripts": {
+    "start": "python3 -m http.server 8765 --bind 127.0.0.1",
     "test": "node --test",
-    "build": "node scripts/build-artifact.js",
-    "start": "python3 -m http.server 8765 --bind 127.0.0.1"
+    "build": "node scripts/build.js",
+    "build:ci": "node --test && node scripts/build.js",
+    "deploy": "npm run build:ci && npx wrangler deploy"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

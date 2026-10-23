@@ -14,10 +14,11 @@
   --warn: #9a6200;
   --risk: #b0443a;
 
-  --display: "Charis SIL", "Gentium Book Plus", Georgia, serif;
-  --ipa: "Charis SIL", "Charis IPA Marks", "Gentium Book Plus", "Doulos SIL", "Noto Serif", serif;
-  --ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --display: "Rio IPA Serif", Georgia, serif;
+  --ipa: "Rio IPA Serif", "Doulos SIL", "Noto Serif", serif;
+  /* IPA symbols inside UI text fall back to the IPA serif. */
+  --ui: "Rio UI Sans", "Rio IPA Serif", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Rio UI Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --radius: 6px;
 }
@@ -36,16 +37,17 @@
   color-scheme: dark;
 }
 
-/* Google's Charis SIL subsets leave out the combining marks [̞ ̯ ̪] (checked
-   2026-10-23). This is a Charis SIL subset (SIL Open Font License) from the
-   Google Fonts text= API with those marks and the letters they sit on, so
-   whole clusters such as ð̞ and e̯ render in one font. */
-@font-face {
-  font-family: "Charis IPA Marks";
-  font-style: normal;
-  font-weight: 400;
-  src: url(data:font/woff2;base64,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) format("woff2");
-}
+/* Self-hosted subsets of Charis SIL and IBM Plex (SIL Open Font License),
+   renamed as the OFL requires for modified fonts. Built by
+   scripts/subset-fonts.py; licenses in fonts/. The serif covers IPA
+   Extensions and the combining marks [̞ ̯ ̪], which Google Fonts' Charis
+   subsets leave out. */
+@font-face { font-family: "Rio IPA Serif"; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/rio-serif-400.woff2) format("woff2"); }
+@font-face { font-family: "Rio IPA Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/rio-serif-400i.woff2) format("woff2"); }
+@font-face { font-family: "Rio IPA Serif"; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/rio-serif-700.woff2) format("woff2"); }
+@font-face { font-family: "Rio UI Sans"; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/rio-sans-400.woff2) format("woff2"); }
+@font-face { font-family: "Rio UI Sans"; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/rio-sans-600.woff2) format("woff2"); }
+@font-face { font-family: "Rio UI Mono"; font-style: normal; font-weight: 500; font-display: swap; src: url(fonts/rio-mono-500.woff2) format("woff2"); }
 
 * { box-sizing: border-box; }
 body {
@@ -117,7 +119,7 @@ textarea {
   font: 1.12rem/1.75 var(--ui);
 }
 textarea:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--celeste-soft); }
-.count { font: 0.75rem var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.count { font: 500 0.75rem var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
 
 .pane-out { background: color-mix(in srgb, var(--celeste-soft) 30%, var(--panel)); }
 .output {
@@ -151,7 +153,7 @@ select { border-radius: var(--radius); max-width: 15rem; }
 .speak-btn {
   display: inline-flex; align-items: center; gap: 6px;
   background: var(--celeste); border-color: var(--celeste); color: var(--panel);
-  font-weight: 500;
+  font-weight: 600;
 }
 .speak-btn svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
 .speak-btn[aria-pressed="true"] { background: var(--sol); border-color: var(--sol); }
@@ -242,7 +244,7 @@ legend {
 }
 .tip .tw { font-weight: 600; font-size: 0.95rem; }
 .tip .tf { font: 1.1rem/1.35 var(--ipa); }
-.tip .tf small { font: 0.68rem var(--mono); text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.6; margin-right: 6px; }
+.tip .tf small { font: 500 0.68rem var(--mono); text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.6; margin-right: 6px; }
 .tip .tr { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
 .tip .tr span { border: 1px solid color-mix(in srgb, var(--bg) 40%, transparent); border-radius: 3px; padding: 1px 5px; font-size: 0.72rem; }
 

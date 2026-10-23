@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Transcriptor fonético rioplatense</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Charis+SIL:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="preload" href="fonts/rio-serif-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/rio-sans-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -40,7 +39,7 @@
           <label><input type="radio" name="mode" id="mode-phonemic" value="phonemic"><span>Phonemic / /</span></label>
         </div>
       </div>
-      <div id="output" class="output" aria-live="polite"></div>
+      <div id="output" class="output" role="region" aria-label="IPA transcription"></div>
       <div class="pane-foot">
         <div class="speech" id="speech">
           <button type="button" class="speak-btn" id="speak" aria-label="Read the text aloud">

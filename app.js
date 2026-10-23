@@ -13,20 +13,23 @@ const OPTION_KEYS = [
   'ipaPauses', 'sPause', 'dFinal', 'rInfinitive', 'njMerger',
 ];
 const STORE_KEY = 'transcriptor-rioplatense/v1';
+const MAX_CHARS = 5000;
 
 const state = { text: SAMPLES.porteno, opts: { ...DEFAULT_OPTIONS } };
 
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
-    if (saved) {
-      if (typeof saved.text === 'string') state.text = saved.text;
-      Object.assign(state.opts, saved.opts);
-    }
+    if (typeof saved?.text === 'string') state.text = saved.text.slice(0, MAX_CHARS);
+    // Copy only known options with valid values: stored data is untrusted.
+    const o = saved?.opts ?? {};
+    OPTION_KEYS.forEach((k) => { if (typeof o[k] === 'boolean') state.opts[k] = o[k]; });
+    if (o.mode === 'phonetic' || o.mode === 'phonemic') state.opts.mode = o.mode;
+    if (o.palatal === 'ʃ' || o.palatal === 'ʒ') state.opts.palatal = o.palatal;
   } catch { /* storage unavailable: keep defaults */ }
   try {
     const fromUrl = new URLSearchParams(location.search).get('text');
-    if (fromUrl) state.text = fromUrl;
+    if (fromUrl) state.text = fromUrl.slice(0, MAX_CHARS);
   } catch { /* no usable URL */ }
 }
 
@@ -37,7 +40,15 @@ function saveState() {
 // ---------------------------------------------------------------------------
 // Rendering
 
-let current = null; // { phonetic, phonemic, starts }
+// The shown transcription, plus the other mode computed only when the tooltip needs it.
+let current = null; // { text, opts, shown, starts, phonetic?, phonemic? }
+
+function forms() {
+  const { text, opts } = current;
+  current.phonetic ??= opts.mode === 'phonetic' ? current.shown : transcribe(text, { ...opts, mode: 'phonetic' });
+  current.phonemic ??= opts.mode === 'phonemic' ? current.shown : transcribe(text, { ...opts, mode: 'phonemic' });
+  return current;
+}
 
 function el(tag, cls, text) {
   const node = document.createElement(tag);
@@ -48,18 +59,15 @@ function el(tag, cls, text) {
 
 function render() {
   const { text, opts } = state;
-  const phonetic = transcribe(text, { ...opts, mode: 'phonetic' });
-  const phonemic = transcribe(text, { ...opts, mode: 'phonemic' });
-  const shown = opts.mode === 'phonemic' ? phonemic : phonetic;
+  const shown = transcribe(text, opts);
   let pos = 0;
   const starts = shown.tokens.map((t) => { const s = pos; pos += t.text.length; return s; });
-  current = { phonetic, phonemic, shown, starts };
+  current = { text, opts: { ...opts }, shown, starts };
 
-  $('count').textContent = `${text.length} / 5000`;
+  $('count').textContent = `${text.length} / ${MAX_CHARS}`;
   $('out-label').textContent = opts.mode === 'phonemic' ? 'IPA · phonemic' : 'IPA · phonetic';
 
-  const out = $('output');
-  out.replaceChildren();
+  const out = document.createDocumentFragment();
   if (!text.trim()) {
     out.append(el('span', 'empty', 'The transcription appears here as you type.'));
   } else {
@@ -80,6 +88,7 @@ function render() {
     });
     out.append(el('span', 'delim', close));
   }
+  $('output').replaceChildren(out);
   renderRules(shown.rules);
 }
 
@@ -122,8 +131,9 @@ const tip = $('tip');
 
 function showTip(span) {
   const i = Number(span.dataset.i);
-  const word = current.phonetic.tokens[i];
-  const broad = current.phonemic.tokens[i];
+  const { phonetic, phonemic } = forms();
+  const word = phonetic.tokens[i];
+  const broad = phonemic.tokens[i];
   tip.replaceChildren();
   tip.append(el('div', 'tw', word.text));
   const line = (label, value) => {
@@ -247,7 +257,14 @@ function syncControls() {
   OPTION_KEYS.forEach((k) => { $(`opt-${k}`).checked = !!state.opts[k]; });
 }
 
-function update() { render(); saveState(); }
+// Several keystrokes within one frame cost one render; saving waits for a pause.
+let frame = 0, saveTimer = 0;
+function update() {
+  cancelAnimationFrame(frame);
+  frame = requestAnimationFrame(render);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveState, 400);
+}
 
 $('input').addEventListener('input', (e) => { state.text = e.target.value; update(); });
 document.querySelectorAll('input[name="mode"]').forEach((r) => r.addEventListener('change', () => {

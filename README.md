@@ -1,5 +1,7 @@
 # Transcriptor fonético rioplatense
 
+Live: <https://rioplatense.onegoodman.studio>
+
 Spanish text to IPA as spoken in the Río de la Plata region (Buenos Aires,
 Montevideo). It works like the unalengua.com *transcriptor fonético* but
 models Rioplatense instead of a generic Spanish:
@@ -24,7 +26,8 @@ No dependencies; needs Node 20+ for the tests and CLI.
 ```bash
 npm start            # serves the web page on http://127.0.0.1:8765
 npm test             # node --test
-npm run build        # dist/transcriptor-rioplatense.html, one self-contained page
+npm run build        # dist/site (production) and dist/artifact.html
+npm run deploy       # tests, build, wrangler deploy
 ```
 
 The CLI reads text from its arguments or from stdin:
@@ -42,6 +45,18 @@ As a library:
 import { transcribe } from './src/transcriber.js';
 transcribe('la calle', { palatal: 'ʒ' }).text; // 'la ˈkaʒe'
 ```
+
+## Deployment
+
+A Cloudflare Worker with static assets only (`wrangler.toml`), served on
+`rioplatense.onegoodman.studio`. A push to `main` deploys: Cloudflare
+Workers Builds runs `npm run build:ci` (tests, then build) and
+`npx wrangler deploy`. A failing test stops the build, and production keeps
+the previous version. `npm run deploy` does the same by hand.
+
+Security headers (hash-based CSP, HSTS and others) are generated into
+`dist/site/_headers`. Why vanilla JS, and what the audit measured:
+[docs/audit.md](docs/audit.md).
 
 ## Limits
 
