@@ -146,3 +146,18 @@ eSpeak NG inside piper-wasm is GPL-3.0; it is served unmodified with a
 source link (THIRD_PARTY_NOTICES.md). The voice's training data is
 CC BY-SA 4.0 (OpenSLR 61) and is credited on the page. The browser contacts
 Hugging Face only when the voice is first used; the page says so.
+
+# Billing safety (2026-10-24)
+
+Requirement from the owner: no service may be able to bill for exceeding
+any limit, under any conditions.
+
+| Service | State checked 2026-10-24 | Can it bill? | Source |
+|---|---|---|---|
+| Cloudflare (Workers, static assets, Workers Builds, Analytics Engine) | Dashboard → Billing: **no payment method on file**; subscriptions Workers Free, Free Plan (onegoodman.studio), Beta Analytics Engine API | No: nothing to charge. Over 100,000 Worker requests/day the Worker fails with error 1027 or is bypassed; static asset requests are free and unlimited | dashboard; developers.cloudflare.com/workers/platform/limits and /pricing |
+| Cloudflare R2 | not enabled | Would add metered overage billing and needs a subscription via checkout (a card, per third-party guides) | developers.cloudflare.com/r2/get-started |
+| Hugging Face (Piper model download) | anonymous download, no account | No | — |
+| Azure (Speech, if used) | Free account with credit: amount due $0.00, "free credit expires in 30 days" | Not while the free account lasts: its spending limit disables resources instead of charging (except Marketplace, support plans, licences). After 30 days, continuing requires pay-as-you-go, which has **no spending limit**; F0 then rejects requests over quota according to a Microsoft staff answer, not the docs | portal; learn.microsoft.com/azure/cost-management-billing/manage/spending-limit; azure.microsoft.com/pricing/free-services |
+
+Consequences: R2 stays off; Azure, if used at all, only as a 30-day trial
+without upgrading.
