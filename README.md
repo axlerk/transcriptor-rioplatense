@@ -24,7 +24,7 @@ transcription of "The North Wind and the Sun" are the test fixtures.
 No dependencies; needs Node 20+ for the tests and CLI.
 
 ```bash
-npm start            # serves the web page on http://127.0.0.1:8765
+npm start            # dev server on http://127.0.0.1:8765 (no caching, cross-origin isolated)
 npm test             # node --test
 npm run build        # dist/site (production) and dist/artifact.html
 npm run deploy       # tests, build, wrangler deploy
@@ -45,6 +45,15 @@ As a library:
 import { transcribe } from './src/transcriber.js';
 transcribe('la calle', { palatal: 'ʒ' }).text; // 'la ˈkaʒe'
 ```
+
+## Argentine voice
+
+The "Listen" button can use Piper's open Argentine voice "Daniela", which
+runs in the browser (a Web Worker with ONNX Runtime Web and the espeak-ng
+phonemizer). The runtime is downloaded at build time by
+`scripts/fetch-vendor.mjs` into `vendor/` (sha256-checked, not in git); the
+114 MB model is fetched once by the browser from Hugging Face and cached.
+Design, measurements and licences: [docs/audit.md](docs/audit.md#text-to-speech-piper-daniela-2026-10-24).
 
 ## Deployment
 
@@ -70,5 +79,6 @@ Security headers (hash-based CSP, HSTS and others) are generated into
 - The Argentine stress shift onto enclitics (*decímelo* → *decimeló*) is
   not modelled.
 - Intonation is not represented.
-- The audio uses the device's speech voices. Few devices ship an Argentine
-  voice, so the page says which accent you are hearing.
+- The Argentine voice is a neural model with its own pronunciation, learned
+  from its training data; it does not read the transcription. The first use
+  downloads about 145 MB.

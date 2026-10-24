@@ -72,3 +72,77 @@ on production before the fix.
 Contrast after the change (WCAG relative luminance): body text 14.4–16.0:1;
 muted text 5.1–5.6:1; pills 4.6–5.9:1 in light, 6.2–8.4:1 in dark. The tie
 ‿ (3.1:1 light) is a non-text graphic, where 3:1 applies.
+
+# Text-to-speech: Piper "Daniela" (2026-10-24)
+
+## Why this stack
+
+Device voices almost never include es-AR, and of the cloud services only
+Azure has an Argentine voice; Amazon Polly and Google Cloud TTS have none
+(checked 2026-10-23, docs/research-2026-10-23.md). Piper's open
+`es_AR-daniela-high` model runs in the browser, costs nothing per request,
+needs no account or key, and keeps the text on the device.
+
+This adds the project's first runtime dependencies, loaded only when the
+user picks the voice:
+
+| Part | Size | Why it is needed |
+|---|---|---|
+| ONNX Runtime Web 1.20.1 (`ort.wasm.min.js` + `ort-wasm-simd-threaded.wasm`) | 49 KB + 11.2 MB | runs the neural model; no lighter VITS runtime exists for the web |
+| piper-wasm 1.0.0 (`piper_phonemize.*`, espeak-ng) | 0.7 MB + 18.1 MB data | converts text to the phoneme IDs the model was trained on (espeak-ng "es-419") |
+| model `es_AR-daniela-high.onnx` | 114.2 MB | the voice; over the 25 MiB per-file limit of Workers static assets, so it is fetched from Hugging Face |
+
+The runtime is fetched at build time by `scripts/fetch-vendor.mjs`, checked
+against pinned sha256 hashes and served from our origin (not stored in git).
+The model URL is pinned to commit `5041a7a` of `rhasspy/piper-voices`, its
+sha256 is checked in the browser, and it is kept in Cache Storage. Hugging
+Face serves it with CORS (`access-control-allow-origin: *` on the CDN,
+checked with `curl -I`).
+
+Not used: feeding the transcriber's own IPA to the model. The model learned
+espeak-ng's es-419 symbols (stress before the vowel, `jj`/`ʝ` for ll/y, /s/
+always `s`); our symbols would be outside its training. Comparison on
+2026-10-24: `espeak-ng -v es-419 --ipa` gives *calle* `kˈajje`, *playa*
+`plˈaʝa`, *pasta* `pˈasta` where we write [ˈkaʃe], [ˈplaʃa], [ˈpahta].
+
+## Measurements
+
+Synthesis speed, real-time factor (synthesis time / audio length; < 1 is
+faster than real time), three sentences of 2–3 s:
+
+| Where | Threads | RTF |
+|---|---|---|
+| Node 25.8.1, onnxruntime-web 1.20.1 wasm, this Mac (8 logical cores) | 1 | 1.36–1.40 |
+| same | 2 | 0.71–0.73 |
+| same | 4 | 0.38–0.41 |
+| Claude browser pane, Web Worker | 1 | 1.43 |
+| Chrome 156, main thread, cross-origin isolated | 4 | 0.40 (674 ms for 1.67 s) |
+
+- Threads need `SharedArrayBuffer`, so the page is now cross-origin
+  isolated (`Cross-Origin-Embedder-Policy: require-corp`; COOP was already
+  `same-origin`). All page resources are same-origin and the model is a
+  CORS fetch, so nothing is blocked.
+- Synthesis runs in a Web Worker: the longest main-thread task during
+  loading and synthesis was 0 ms (PerformanceObserver "longtask").
+- With 4 threads, initialisation hung silently in the Claude browser pane
+  while the pane was hidden. The page therefore retries with one thread if
+  the voice is not ready 30 s after the model is available.
+- Chrome driven by the extension measured far slower in a Worker (RTF
+  5.5–11.9) with the same code; even single-thread loading took tens of
+  seconds, which points to the unfocused app being throttled. Those timings
+  are not used.
+- Not measured: phones. With RTF 0.4 on this Mac, a phone several times
+  slower would fall to roughly real time or slower (inferred).
+
+End to end on the production build under `wrangler dev` (CSP enforced, no
+violations): model download 8 s, voice ready 2 s later, two sentences played
+in turn with the current one highlighted. The audio itself was not listened
+to; it was checked as non-silent (RMS 0.05–0.07, peak 0.35–0.41) with
+plausible durations (*Hola, ¿cómo andás?* 0.99 s).
+
+## Licences and privacy
+
+eSpeak NG inside piper-wasm is GPL-3.0; it is served unmodified with a
+source link (THIRD_PARTY_NOTICES.md). The voice's training data is
+CC BY-SA 4.0 (OpenSLR 61) and is credited on the page. The browser contacts
+Hugging Face only when the voice is first used; the page says so.

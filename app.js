@@ -1,5 +1,6 @@
 import { transcribe, DEFAULT_OPTIONS } from './src/transcriber.js';
 import { RULES } from './src/rules.js';
+import { PIPER_ENABLED, PIPER_DOWNLOAD_MB, piperIsCached, piperChunks, createPiperVoice } from './src/tts-piper.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -15,7 +16,7 @@ const OPTION_KEYS = [
 const STORE_KEY = 'transcriptor-rioplatense/v1';
 const MAX_CHARS = 5000;
 
-const state = { text: SAMPLES.porteno, opts: { ...DEFAULT_OPTIONS } };
+const state = { text: SAMPLES.porteno, opts: { ...DEFAULT_OPTIONS }, voice: '' };
 
 function loadState() {
   try {
@@ -26,6 +27,7 @@ function loadState() {
     OPTION_KEYS.forEach((k) => { if (typeof o[k] === 'boolean') state.opts[k] = o[k]; });
     if (o.mode === 'phonetic' || o.mode === 'phonemic') state.opts.mode = o.mode;
     if (o.palatal === 'ʃ' || o.palatal === 'ʒ') state.opts.palatal = o.palatal;
+    if (typeof saved?.voice === 'string' && saved.voice.length < 300) state.voice = saved.voice;
   } catch { /* storage unavailable: keep defaults */ }
   try {
     const fromUrl = new URLSearchParams(location.search).get('text');
@@ -172,8 +174,7 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTip();
 document.addEventListener('pointerdown', (e) => { if (!e.target.closest?.('#output .w')) hideTip(); });
 output.addEventListener('click', (e) => {
   const span = e.target.closest('.w');
-  const u = span && utterance(current.shown.tokens[Number(span.dataset.i)].text);
-  if (u) synth.speak(u);
+  if (span) speakWord(current.shown.tokens[Number(span.dataset.i)].text);
 });
 
 window.addEventListener('scroll', hideTip, { passive: true });
@@ -187,10 +188,18 @@ $('rules').addEventListener('mouseover', (e) => highlightRule(e.target.closest('
 $('rules').addEventListener('mouseleave', () => highlightRule(null));
 
 // ---------------------------------------------------------------------------
-// Speech (Web Speech API). Rioplatense voices first.
+// Speech. Two engines: Piper's Argentine voice "Daniela", generated on the
+// device (src/tts-piper.js), and the device's own voices (Web Speech API).
 
+const PIPER = 'piper';
+const piperSupported = PIPER_ENABLED && typeof Worker === 'function' && typeof WebAssembly === 'object';
 const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
 let voices = [];
+let piperCached = false;
+let piper = null; // Promise of the loaded voice, once loading has started
+let piperStatus = ''; // progress or error text while loading
+let audioCtx = null;
+let speaking = null; // the current Piper playback: { stopped, source }
 
 function voiceRank(v) {
   const lang = v.lang.replace('_', '-').toLowerCase();
@@ -200,28 +209,135 @@ function voiceRank(v) {
   return 2;
 }
 
+const isPiper = () => $('voice').value === PIPER;
+
 function loadVoices() {
-  voices = synth.getVoices()
+  voices = (synth?.getVoices() ?? [])
     .filter((v) => v.lang.toLowerCase().startsWith('es'))
     .sort((a, b) => voiceRank(a) - voiceRank(b) || a.name.localeCompare(b.name));
   const select = $('voice');
-  const previous = select.value;
-  select.replaceChildren(...voices.map((v) => {
+  const previous = select.value || state.voice;
+  const options = voices.map((v) => {
     const o = el('option', null, `${v.name} (${v.lang})`);
     o.value = v.voiceURI;
     return o;
-  }));
-  if (voices.some((v) => v.voiceURI === previous)) select.value = previous;
-  const note = $('voice-note');
-  if (!voices.length) {
-    note.textContent = 'This device has no Spanish voice, so audio is off. The transcription works without it.';
-    note.hidden = false;
-    $('speech').hidden = true;
-  } else {
-    $('speech').hidden = false;
-    note.hidden = voiceRank(voices[0]) <= 1;
-    note.textContent = 'No Argentine or Uruguayan voice on this device: the audio has another accent.';
+  });
+  if (piperSupported) {
+    const o = el('option', null, 'Daniela, Argentina (Piper)');
+    o.value = PIPER;
+    options.unshift(o);
   }
+  select.replaceChildren(...options);
+  const values = options.map((o) => o.value);
+  if (values.includes(previous)) select.value = previous;
+  // Daniela by default only when it costs no surprise download.
+  else if (piperSupported && (piperCached || !voices.length)) select.value = PIPER;
+  else if (voices.length) select.value = voices[0].voiceURI;
+  $('speech').hidden = !options.length;
+  updateVoiceNote();
+}
+
+function updateVoiceNote() {
+  const note = $('voice-note');
+  let text = '';
+  if (!$('voice').options.length) {
+    text = 'This browser has no Spanish voice, so audio is off. The transcription works without it.';
+  } else if (isPiper()) {
+    if (piperStatus) text = piperStatus;
+    else if (!piperCached) text = `Argentine voice generated on your device. The first use downloads about ${PIPER_DOWNLOAD_MB} MB, the model from Hugging Face; after that it works offline.`;
+  } else if (voices.length && voiceRank(voices.find((v) => v.voiceURI === $('voice').value) ?? voices[0]) > 1) {
+    text = piperSupported
+      ? 'This voice has another accent. For an Argentine voice, choose “Daniela, Argentina (Piper)”.'
+      : 'No Argentine or Uruguayan voice on this device: the audio has another accent.';
+  }
+  note.textContent = text;
+  note.hidden = !text;
+}
+
+function loadPiper() {
+  if (!piper) {
+    piperStatus = 'Starting the Argentine voice…';
+    updateVoiceNote();
+    piper = createPiperVoice((f) => {
+      piperStatus = `Downloading the Argentine voice… ${Math.round(f * 100)}%`;
+      updateVoiceNote();
+    }).then((voice) => {
+      piperCached = true;
+      piperStatus = '';
+      updateVoiceNote();
+      return voice;
+    }, (e) => {
+      piper = null;
+      piperStatus = `The Argentine voice could not load (${e.message}). Try again, or choose another voice.`;
+      updateVoiceNote();
+      throw e;
+    });
+  }
+  return piper;
+}
+
+function setSpeaking(on) { $('speak').setAttribute('aria-pressed', String(on)); }
+
+// Highlight the words whose text lies in [start, end) of the input.
+function markRange(start, end) {
+  output.querySelectorAll('.w').forEach((span) => {
+    const s = current.starts[Number(span.dataset.i)];
+    span.classList.toggle('speaking', s >= start && s < end);
+  });
+}
+
+function stopSpeaking() {
+  if (speaking) { speaking.stopped = true; speaking.source?.stop(); speaking = null; }
+  synth?.cancel();
+  setSpeaking(false);
+  markRange(-1, -1);
+}
+
+function playPcm(session, pcm, sampleRate) {
+  return new Promise((resolve) => {
+    const buffer = audioCtx.createBuffer(1, pcm.length, sampleRate);
+    buffer.copyToChannel(pcm, 0);
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioCtx.destination);
+    source.onended = resolve;
+    session.source = source;
+    source.start();
+  });
+}
+
+// Sentences with their offsets in the text, for highlighting.
+function chunksWithOffsets(text) {
+  let pos = 0;
+  return piperChunks(text).map((chunk) => {
+    const start = text.indexOf(chunk, pos);
+    pos = start + chunk.length;
+    return { text: chunk, start, end: pos };
+  });
+}
+
+async function speakPiper(text, highlight) {
+  // The AudioContext must start inside the click, before the first await.
+  audioCtx ??= new AudioContext();
+  audioCtx.resume();
+  const session = { stopped: false, source: null };
+  speaking = session;
+  setSpeaking(true);
+  try {
+    const voice = await loadPiper();
+    const rate = Number($('rate').value);
+    const chunks = highlight ? chunksWithOffsets(text) : [{ text, start: -1, end: -1 }];
+    let next = chunks.length ? voice.synthesize(chunks[0].text, rate) : null;
+    for (let i = 0; i < chunks.length && !session.stopped; i++) {
+      const { pcm, sampleRate } = await next;
+      // Synthesize the next sentence while this one plays.
+      if (i + 1 < chunks.length) next = voice.synthesize(chunks[i + 1].text, rate);
+      if (session.stopped) break;
+      markRange(chunks[i].start, chunks[i].end);
+      await playPcm(session, pcm, sampleRate);
+    }
+  } catch { /* loadPiper reports load errors in the note */ }
+  if (speaking === session) { speaking = null; setSpeaking(false); markRange(-1, -1); }
 }
 
 function utterance(text) {
@@ -235,21 +351,25 @@ function utterance(text) {
   return u;
 }
 
+function speakWord(text) {
+  stopSpeaking();
+  if (isPiper()) { speakPiper(text, false); return; }
+  const u = utterance(text);
+  if (u) synth.speak(u);
+}
+
 function speakAll() {
-  const btn = $('speak');
-  if (synth?.speaking) { synth.cancel(); return; }
+  if (speaking || synth?.speaking) { stopSpeaking(); return; }
+  if (!state.text.trim()) return;
+  if (isPiper()) { speakPiper(state.text, true); return; }
   const u = utterance(state.text);
   if (!u) return;
-  const spans = [...output.querySelectorAll('.w')];
-  const mark = (idx) => spans.forEach((s) => s.classList.toggle('speaking', Number(s.dataset.i) === idx));
   u.onboundary = (e) => {
     if (e.name && e.name !== 'word') return;
-    let idx = -1;
-    current.starts.forEach((s, i) => { if (s <= e.charIndex && current.shown.tokens[i].kind === 'word') idx = i; });
-    mark(idx);
+    markRange(e.charIndex, e.charIndex + (e.charLength || 1));
   };
-  u.onstart = () => btn.setAttribute('aria-pressed', 'true');
-  u.onend = u.onerror = () => { btn.setAttribute('aria-pressed', 'false'); mark(-1); };
+  u.onstart = () => setSpeaking(true);
+  u.onend = u.onerror = () => { setSpeaking(false); markRange(-1, -1); };
   synth.speak(u);
 }
 
@@ -300,18 +420,19 @@ $('copy').addEventListener('click', async () => {
   setTimeout(() => { btn.textContent = 'Copy'; }, 1600);
 });
 $('speak').addEventListener('click', speakAll);
+$('voice').addEventListener('change', () => {
+  stopSpeaking();
+  state.voice = $('voice').value;
+  saveState();
+  updateVoiceNote();
+});
 
-if (synth) {
-  loadVoices();
-  synth.addEventListener?.('voiceschanged', loadVoices);
-} else {
-  $('speech').hidden = true;
-  $('voice-note').textContent = 'This browser has no speech synthesis, so audio is off.';
-  $('voice-note').hidden = false;
-}
+synth?.addEventListener?.('voiceschanged', loadVoices);
+if (piperSupported) piperIsCached().then((cached) => { piperCached = cached; loadVoices(); });
 
 $('title-ipa').textContent = `[${transcribe('Transcriptor fonético rioplatense').text}]`;
 
 loadState();
 syncControls();
 render();
+loadVoices();
