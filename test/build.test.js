@@ -25,7 +25,7 @@ test('build: every inline script and style is allowed by the CSP hash', () => {
   assert.doesNotMatch(html, /fonts\.googleapis|src="app\.js"/);
   // Piper TTS: worker and self-hosted runtime are shipped, the CSP allows them.
   assert.ok(existsSync(new URL('dist/site/src/tts-worker.js', root)));
-  for (const f of ['onnxruntime-web@1.20.1/ort.wasm.min.js', 'piper-wasm@1.0.0/piper_phonemize.data']) {
+  for (const f of ['onnxruntime-web-1.20.1/ort.wasm.min.js', 'piper-wasm-1.0.0/piper_phonemize.data']) {
     assert.ok(existsSync(new URL(`dist/site/vendor/${f}`, root)), f);
   }
   assert.match(headers, /script-src 'self' 'wasm-unsafe-eval'/);

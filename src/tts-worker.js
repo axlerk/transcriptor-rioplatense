@@ -12,9 +12,9 @@ const MODEL = {
   bytes: 114199011,
 };
 const CACHE = 'piper-es_AR-daniela-high-5041a7a';
-const ORT_DIR = 'onnxruntime-web@1.20.1/';
-const PHONEMIZE_DIR = 'piper-wasm@1.0.0/';
-const CONFIG = 'piper-voices@5041a7a/es_AR-daniela-high.onnx.json';
+const ORT_DIR = 'onnxruntime-web-1.20.1/';
+const PHONEMIZE_DIR = 'piper-wasm-1.0.0/';
+const CONFIG = 'piper-voices-5041a7a/es_AR-daniela-high.onnx.json';
 
 let voice = null;
 
