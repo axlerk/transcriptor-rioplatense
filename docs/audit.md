@@ -161,3 +161,18 @@ any limit, under any conditions.
 
 Consequences: R2 stays off; Azure, if used at all, only as a 30-day trial
 without upgrading.
+
+What happens at day 30 (Azure free account FAQ and "Avoid charges with
+your Azure free account", read 2026-10-24):
+
+- "Your subscription and services are disabled when your credit runs out
+  or expires at the end of 30 days. To continue using Azure services, you
+  must upgrade your account."
+- FAQ: "We'll never charge you unless you decide to move to pay-as-you-go
+  pricing." Moving is the owner's explicit decision; it is not automatic.
+- After upgrading: "If your usage exceeds the specified quantity of free
+  services, you'll need to pay for the exceeding amount at pay-as-you-go
+  rates." So returning to Azure after day 30 means accepting possible
+  charges, with no spending limit.
+- FAQ: "There is a limit of one account with free services and $200 credit
+  per new customer." A second free trial is not available.
