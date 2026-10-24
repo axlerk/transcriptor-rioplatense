@@ -216,7 +216,9 @@ function loadVoices() {
     .filter((v) => v.lang.toLowerCase().startsWith('es'))
     .sort((a, b) => voiceRank(a) - voiceRank(b) || a.name.localeCompare(b.name));
   const select = $('voice');
-  const previous = select.value || state.voice;
+  // Only the user's own choice sticks; an automatic default is recomputed,
+  // because device voices may arrive after the first call.
+  const previous = state.voice;
   const options = voices.map((v) => {
     const o = el('option', null, `${v.name} (${v.lang})`);
     o.value = v.voiceURI;
